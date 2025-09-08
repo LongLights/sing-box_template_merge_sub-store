@@ -28,79 +28,28 @@
         "tag": "cn_dns",
         "type": "udp",
         "server": "114.114.114.114"
-      },
-      {
-        "tag": "ai_dns",
-        "type": "https",
-        "server": "8.8.8.8",
-        "detour": "AI-Service"
-      },
-      {
-        "tag": "media_dns",
-        "type": "https",
-        "server": "8.8.8.8",
-        "detour": "Streaming-Media"
-      },
-      {
-        "tag": "tiktok_dns",
-        "type": "https",
-        "server": "8.8.8.8",
-        "detour": "TikTok"
-      },
-      {
-        "tag": "paypal_dns",
-        "type": "https",
-        "server": "8.8.8.8",
-        "detour": "PayPal"
-      },
-      {
-        "tag": "telegram_dns",
-        "type": "https",
-        "server": "8.8.8.8",
-        "detour": "Telegram"
-      },
-      {
-        "tag": "emby_dns",
-        "type": "https",
-        "server": "8.8.8.8",
-        "detour": "BlackCat-EMBY"
       }
     ],
     "rules": [
-      {
-        "domain_suffix": [ "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade" ],
-        "server": "emby_dns"
-      },
-      {
-        "rule_set": "telegramsite",
-        "server": "telegram_dns"
-      },
-      {
-        "rule_set": "tiktok",
-        "server": "tiktok_dns"
-      },
-      {
-        "rule_set": "paypal",
-        "server": "paypal_dns"
-      },
-      {
-        "rule_set": "aiservice",
-        "server": "ai_dns"
-      },
-      {
-        "rule_set": [ "netflixsite", "hbo", "disney", "hulu" ],
-        "server": "media_dns"
-      },
       {
         "rule_set": "gfw",
         "server": "proxy_dns"
       },
       {
-        "rule_set": "bilibili",
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": "geosite-geolocation-!cn",
+            "invert": true
+          },
+          {
+            "rule_set": "cnip"
+          }
+        ],
         "server": "cn_dns"
       }
     ],
-    "final": "cn_dns",
     "disable_cache": false,
     "independent_cache": true,
     "strategy": "ipv4_only"
@@ -191,6 +140,12 @@
     "auto_detect_interface": true,
     "default_domain_resolver": "cn_dns",
     "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geosite-geolocation-!cn",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-!cn.srs"
+      },
       {
         "tag": "privatesite",
         "type": "remote",
