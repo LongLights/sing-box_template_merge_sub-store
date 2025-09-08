@@ -5,7 +5,7 @@
       "external_ui": "ui",
       "secret": "",
       "external_ui_download_url": "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip",
-      "external_ui_download_detour": "🐋 默认节点",
+      "external_ui_download_detour": "Default",
       "default_mode": "rule"
     },
     "cache_file": {
@@ -22,7 +22,7 @@
         "tag": "proxy_dns",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "🐋 默认节点"
+        "detour": "Default"
       },
       {
         "tag": "cn_dns",
@@ -33,42 +33,42 @@
         "tag": "ai_dns",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "🤖 海外AI服务"
+        "detour": "AI-Service"
       },
       {
         "tag": "media_dns",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "🎥 海外流媒体"
+        "detour": "Streaming-Media"
       },
       {
         "tag": "tiktok_dns",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "🎵 TikTok"
+        "detour": "TikTok"
       },
       {
         "tag": "paypal_dns",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "🗃️ PayPal"
+        "detour": "PayPal"
       },
       {
         "tag": "telegram_dns",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "📟 Telegram"
+        "detour": "Telegram"
       },
       {
         "tag": "emby_dns",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "📽️ 黑猫emby"
+        "detour": "BlackCat-EMBY"
       }
     ],
     "rules": [
       {
-        "domain_suffix": ["uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade"],
+        "domain_suffix": [ "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade" ],
         "server": "emby_dns"
       },
       {
@@ -88,15 +88,19 @@
         "server": "ai_dns"
       },
       {
-        "rule_set": ["netflixsite", "hbo", "disney", "hulu"],
+        "rule_set": [ "netflixsite", "hbo", "disney", "hulu" ],
         "server": "media_dns"
       },
       {
-        "rule_set": "cnsite",
+        "rule_set": "gfw",
+        "server": "proxy_dns"
+      },
+      {
+        "rule_set": "bilibili",
         "server": "cn_dns"
       }
     ],
-    "final": "proxy_dns",
+    "final": "cn_dns",
     "disable_cache": false,
     "independent_cache": true,
     "strategy": "ipv4_only"
@@ -106,10 +110,10 @@
       "type": "tun",
       "tag": "tun-in",
       "interface_name": "singbox_tun",
-      "address": ["172.18.0.1/30"],
+      "address": [ "172.18.0.1/30" ],
       "mtu": 9000,
       "auto_route": true,
-      "route_exclude_address": ["10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16"],
+      "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
       "strict_route": true,
       "endpoint_independent_nat": false,
       "stack": "mixed",
@@ -124,70 +128,66 @@
   ],
   "outbounds": [
     {
-      "type": "direct",
-      "tag": "🔄 直连入口"
-    },
-    {
       "type": "selector",
-      "tag": "🐋 默认节点",
-      "outbounds": ["🎚️ 自动选择", "🔄 直连入口"]
+      "tag": "Default",
+      "outbounds": [ "Auto" ]
     },
     {
       "type": "urltest",
-      "tag": "🎚️ 自动选择",
-      "url": "https://cp.cloudflare.com",
-      "outbounds": [],
+      "tag": "Auto",
+      "outbounds": [ ],
       "interval": "3m",
       "tolerance": 30
     },
     {
       "type": "selector",
-      "tag": "🔗 中继前置",
-      "outbounds": ["🔄 直连入口"]
+      "tag": "Relay",
+      "outbounds": [ "Direct-Out" ]
+    },
+
+    {
+      "type": "selector",
+      "tag": "PayPal",
+      "outbounds": [ "Default", "Auto" ]
     },
     {
       "type": "selector",
-      "tag": "🚅 国内流量",
-      "outbounds": ["🔄 直连入口", "🐋 默认节点", "🎚️ 自动选择"]
+      "tag": "AI-Service",
+      "outbounds": [ "Default", "Auto" ]
     },
     {
       "type": "selector",
-      "tag": "📺 哔哩哔哩",
-      "outbounds": ["🚅 国内流量", "🐋 默认节点", "🎚️ 自动选择"]
+      "tag": "Streaming-Media",
+      "outbounds": [ "Default", "Auto" ]
     },
     {
       "type": "selector",
-      "tag": "🤖 海外AI服务",
-      "outbounds": ["🐋 默认节点", "🎚️ 自动选择", "🚅 国内流量"]
+      "tag": "TikTok",
+      "outbounds": [ "Default", "Auto" ]
+    },
+
+    {
+      "type": "selector",
+      "tag": "Telegram",
+      "outbounds": [ "Default", "Auto" ]
     },
     {
       "type": "selector",
-      "tag": "🎥 海外流媒体",
-      "outbounds": ["🐋 默认节点", "🎚️ 自动选择", "🚅 国内流量"]
+      "tag": "BlackCat-EMBY",
+      "outbounds": [ "Default", "Auto" ]
     },
     {
       "type": "selector",
-      "tag": "🎵 TikTok",
-      "outbounds": ["🐋 默认节点", "🎚️ 自动选择", "🚅 国内流量"]
+      "tag": "BiliBili",
+      "outbounds": [ "Direct-Out", "Default", "Auto" ]
     },
     {
-      "type": "selector",
-      "tag": "🗃️ PayPal",
-      "outbounds": ["🐋 默认节点", "🎚️ 自动选择", "🚅 国内流量"]
-    },
-    {
-      "type": "selector",
-      "tag": "📟 Telegram",
-      "outbounds": ["🐋 默认节点", "🎚️ 自动选择", "🚅 国内流量"]
-    },
-    {
-      "type": "selector",
-      "tag": "📽️ 黑猫emby",
-      "outbounds": ["🐋 默认节点", "🎚️ 自动选择", "🚅 国内流量"]
+      "type": "direct",
+      "tag": "Direct-Out"
     }
   ],
   "route": {
-    "final": "🐋 默认节点",
+    "final": "Default",
     "auto_detect_interface": true,
     "default_domain_resolver": "cn_dns",
     "rule_set": [
@@ -197,7 +197,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/private.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "privateip",
@@ -205,15 +205,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/private.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
-      },
-      {
-        "tag": "cnsite",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/cn.srs",
-        "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "cnip",
@@ -221,7 +213,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/cn.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "cngames",
@@ -229,7 +221,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-games-!cn@cn.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "gfw",
@@ -237,15 +229,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/gfw.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
-      },
-      {
-        "tag": "proxy",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo-lite/geosite/proxy.srs",
-        "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "aiservice",
@@ -253,7 +237,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-ai-!cn.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "paypal",
@@ -261,7 +245,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/paypal.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "tiktok",
@@ -269,7 +253,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/tiktok.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "telegramip",
@@ -277,7 +261,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/telegram.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "telegramsite",
@@ -285,7 +269,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/telegram.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "netflixsite",
@@ -293,7 +277,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/netflix.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "netflixip",
@@ -301,7 +285,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/netflix.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "disney",
@@ -309,7 +293,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/disney.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "hbo",
@@ -317,7 +301,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/hbo.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "hulu",
@@ -325,7 +309,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/hulu.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       },
       {
         "tag": "bilibili",
@@ -333,7 +317,7 @@
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/bilibili.srs",
         "update_interval": "24h",
-        "download_detour": "🐋 默认节点"
+        "download_detour": "Default"
       }
     ],
     "rules": [
@@ -341,52 +325,67 @@
         "action": "sniff"
       },
       {
+        "action": "resolve"
+      },
+      {
         "protocol": "dns",
         "action": "hijack-dns"
       },
       {
         "clash_mode": "direct",
-        "outbound": "🔄 直连入口"
+        "outbound": "Direct-Out"
       },
       {
         "clash_mode": "global",
-        "outbound": "🐋 默认节点"
+        "outbound": "Default"
       },
       {
-        "domain_suffix": ["uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade"],
-        "outbound": "📽️ 黑猫emby"
+        "domain_suffix": [ "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade" ],
+        "outbound": "BlackCat-EMBY"
       },
       {
         "rule_set": "paypal",
-        "outbound": "🗃️ PayPal"
+        "outbound": "PayPal"
       },
       {
-        "rule_set": ["telegramip", "telegramsite"],
-        "outbound": "📟 Telegram"
+        "rule_set": "telegramsite",
+        "outbound": "Telegram"
       },
       {
         "rule_set": "tiktok",
-        "outbound": "🎵 TikTok"
+        "outbound": "TikTok"
       },
       {
         "rule_set": "aiservice",
-        "outbound": "🤖 海外AI服务"
+        "outbound": "AI-Service"
       },
       {
         "rule_set": "bilibili",
-        "outbound": "📺 哔哩哔哩"
+        "outbound": "BiliBili"
       },
       {
-        "rule_set": ["netflixsite", "netflixip", "hbo", "disney", "hulu"],
-        "outbound": "🎥 海外流媒体"
+        "rule_set": [ "netflixsite", "hbo", "disney", "hulu" ],
+        "outbound": "Streaming-Media"
       },
       {
-        "rule_set": ["privatesite", "privateip", "cnsite", "cnip", "cngames"],
-        "outbound": "🚅 国内流量"
+        "rule_set": "gfw",
+        "outbound": "Default"
       },
       {
-        "rule_set": ["gfw", "proxy"],
-        "outbound": "🐋 默认节点"
+        "rule_set": [ "privatesite", "cngames" ],
+        "outbound": "Direct-Out"
+      },
+      {
+        "rule_set": "telegramip",
+        "outbound": "Telegram"
+      },
+      {
+        "rule_set": "netflixip",
+        "outbound": "Streaming-Media"
+      },
+      {
+        "rule_set": [ "privateip", "cnip" ],
+        "outbound": "Direct-Out"
       }
     ]
   }

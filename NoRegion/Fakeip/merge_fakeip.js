@@ -50,9 +50,9 @@ const terminalTags = proxies.filter(p => !p.detour).map(p => p.tag);
 
 // 7. 遍历分组追加节点
 config.outbounds.forEach(group => {
-  if (!Array.isArray(group.outbounds) || group.tag === "Direct-Out") return;
+  if (!Array.isArray(group.outbounds) || group.tag === "🔄 直连入口") return;
 
-  if (group.tag === "Relay") {
+  if (group.tag === "🔗 中继前置") {
     group.outbounds.push(...terminalTags);
   } else {
     group.outbounds.push(...allTags);
