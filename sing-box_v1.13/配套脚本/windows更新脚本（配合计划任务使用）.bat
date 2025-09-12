@@ -1,20 +1,20 @@
 @echo off
-echo [%date% %time%] ¿ªÊ¼¸üĞÂ config.json...
+echo [%date% %time%] å¼€å§‹æ›´æ–° config.json...
 
-:: ÏÂÔØ×îĞÂÅäÖÃ
-curl -o D:\singbox\config.json <http://ÄãÔÚsub-storeÖĞµÄÄ£°åÁ´½Ó>
+:: ä¸‹è½½æœ€æ–°é…ç½®
+curl -o D:\sing-box\config.json <http://ä½ åœ¨sub-storeä¸­çš„æ¨¡æ¿é“¾æ¥>
 
 if %ERRORLEVEL% NEQ 0 (
-  echo [%date% %time%] ÏÂÔØÊ§°Ü£¡
+  echo [%date% %time%] ä¸‹è½½å¤±è´¥ï¼
   exit /b 1
 )
 
-echo [%date% %time%] ÏÂÔØ³É¹¦£¬ÖØÆô sing-box...
+echo [%date% %time%] ä¸‹è½½æˆåŠŸï¼Œé‡å¯ sing-box...
 
-:: ¹Ø±ÕÒÑÓĞ½ø³Ì£¨Èç¹û´æÔÚ£©
+:: å…³é—­å·²æœ‰è¿›ç¨‹ï¼ˆå¦‚æœå­˜åœ¨ï¼‰
 taskkill /f /im sing-box.exe >nul 2>&1
 
-:: Æô¶¯ĞÂµÄ sing-box ºóÌ¨ÔËĞĞ£¨Ê¹ÓÃ start ×îĞ¡»¯£©
-start "" /min D:\singbox\sing-box.exe run -c D:\singbox\config.json -D D:\singbox
+:: å¯åŠ¨æ–°çš„ sing-box åå°è¿è¡Œï¼ˆä½¿ç”¨ start æœ€å°åŒ–ï¼‰
+start "" /min D:\sing-box\sing-box.exe run -c D:\sing-box\config.json -D D:\sing-box
 
-echo [%date% %time%] ÒÑÖØÆô sing-box¡£
+echo [%date% %time%] å·²é‡å¯ sing-boxã€‚
