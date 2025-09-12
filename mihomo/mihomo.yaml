@@ -1,21 +1,18 @@
+# experimental:
+#   quic-go-disable-gso: true
 #统一延迟测速和tcp并发
-tcp-concurrent: true
 unified-delay: true
+tcp-concurrent: true
 #dns配置
 dns:
   enable: true
+  ipv6: false
   use-hosts: true
   use-system-hosts: true
-  ipv6: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   nameserver:
-    - 114.114.114.114
-  fallback:
-    - 8.8.8.8
-  respect-rules: true
-  proxy-server-nameserver:
-    - 114.114.114.114 
+    - 223.5.5.5
   fake-ip-filter:
     #本地网络及保留域名
     - "*.lan"
@@ -24,6 +21,9 @@ dns:
     - "*.localdomain"
     - "*.home.arpa"
     - "*.invalid"
+    - "+.miwifi.com"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
     #NTP 时间同步服务
     - "+.pool.ntp.org"
     - "time.*.com"
@@ -47,60 +47,51 @@ dns:
     - "+.ptlogin2.qq.com"
   nameserver-policy:
     "+.arpa": "127.0.0.1"
-
+    
 proxy-groups:
   #规则匹配组
   - name: 默认节点
     type: select
     proxies: [自动选择, DIRECT]
     icon: https://raw.githubusercontent.com/Orz-3/mini/refs/heads/master/Color/Kuai.png
-
   - name: 自动选择
     type: url-test
     url: https://www.gstatic.com/generate_204
     interval: 300
     proxies: []
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Speedtest.png
-
   - name: 中继前置
     type: select
     proxies: [DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TestFlight.png
-
-  - name: 哔哩哔哩
-    type: select
-    proxies: [DIRECT, 默认节点, 自动选择]
-    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/bilibili.png
-
   - name: 海外AI服务
     type: select
     proxies: [默认节点, 自动选择, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/ChatGPT.png
-
-  - name: 海外流媒体
-    type: select
-    proxies: [默认节点, 自动选择, DIRECT]
-    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Netflix.png
-
-  - name: TikTok
-    type: select
-    proxies: [默认节点, 自动选择, DIRECT]
-    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TikTok.png
-
   - name: PayPal
     type: select
     proxies: [默认节点, 自动选择, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/PayPal.png
-
+  - name: TikTok
+    type: select
+    proxies: [默认节点, 自动选择, DIRECT]
+    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TikTok.png
+  - name: 海外流媒体
+    type: select
+    proxies: [默认节点, 自动选择, DIRECT]
+    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Netflix.png
   - name: 黑猫emby
     type: select
     proxies: [默认节点, 自动选择, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Emby.png
-
   - name: Telegram
     type: select
     proxies: [默认节点, 自动选择, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Telegram.png
+  - name: 哔哩哔哩
+    type: select
+    proxies: [DIRECT, 默认节点, 自动选择]
+    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/bilibili.png
 
 rule-providers:
   privatesite:
@@ -218,19 +209,10 @@ rule-providers:
 
 rules:
   #个人小众需求
-  - DST-PORT,3478,DIRECT
-  - DST-PORT,5201,DIRECT
-  - DST-PORT,22,DIRECT
+  - DST-PORT,22/3478/5201/21114-21116,DIRECT
   - DOMAIN-keyword,stun,DIRECT
   - DOMAIN-SUFFIX,turn.cloudflare.com,DIRECT
-  - DOMAIN-SUFFIX,rustdesk.com,DIRECT
-  - DOMAIN-SUFFIX,miguvideo.com,DIRECT
-  - DOMAIN-SUFFIX,migucloud.com,DIRECT
-  - DOMAIN-SUFFIX,7pzzv.us,默认节点
-  - DOMAIN-SUFFIX,j03og.app,默认节点
-  - DOMAIN-SUFFIX,cjchao.com,默认节点
-  - DOMAIN-SUFFIX,qianchengwandian.top,默认节点
-  - DOMAIN-SUFFIX,szaction.cc,默认节点
+  - DOMAIN-SUFFIX,ghfast.top,DIRECT
   #分流规则
   - DOMAIN-SUFFIX,emby.bid,黑猫emby
   - DOMAIN-SUFFIX,emby.men,黑猫emby

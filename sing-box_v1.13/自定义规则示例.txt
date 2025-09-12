@@ -1,0 +1,10 @@
+[
+  {
+    "port": 22,
+    "outbound": "Direct-Out"
+  },
+  {
+    "domain_suffix": "co.jp",
+    "outbound": "日本 阿里云国际"
+  }
+]

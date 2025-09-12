@@ -1,6 +1,19 @@
 # sing-box_template_merge_sub-store
 
-## 使用说明
+## sing-box_v1.13配置模板使用说明
+
+提供两套配置模板及一个js脚本，js脚本使用参考旧版说明中的使用步骤
+
+linux后缀的配置模板和win后缀唯一区别是inbounds中是否含有auto_redirect字段，这个特性不光windows，即使是安卓、iOS同样并不支持
+
+因此诸如OpenWRT、Debian之类的linux发行版应使用linux后缀（使用auto_redirect，作为主路由或旁路网关实现透明代理），其他如安卓、iOS均应使用win后缀（不使用auto_redirect）
+
+p.s. 使用配套脚本需要以下条件：
+1. 如果使用openwrt更新脚本，需要确保使用官方ipk方式安装（需要支持/etc/init.d/sing-box指令）
+2. 如果使用windows更新脚本，不能直接下载bat文件，需要手动复制其中的内容自行创建bat文件
+
+
+## 以下是旧版使用说明（对应sing-box_old文件夹内的内容）
 
 本项目所搭载的js脚本，必须在[sub-store](https://github.com/sub-store-org/Sub-Store)内使用，仅测试了项目中的singbox模板，未测试其他模板，该模板官方1.12或1.11内核一定可以使用，其余版本未测试。
 
@@ -17,10 +30,10 @@
 3. 在sub-store的文件管理功能中编辑singbox_template.json 添加一个脚本操作，并且选择链接：
 
 ```
-https://raw.githubusercontent.com/LongLights/sing-box_template_merge_sub-store/refs/heads/main/merge.js#name=<你在sub-store中的订阅名称>&type=<在sub-store中的订阅类型>#noCache
+https://raw.githubusercontent.com/LongLights/sing-box_template_merge_sub-store/refs/heads/main/merge.js#name=<你在sub-store中的订阅名称>&type=<在sub-store中的订阅类型>&rules=<在sub-store中保存的自定义规则>
 ```
 
-type可以赋值0或1,0表示单条订阅，1表示组合订阅
+type可以赋值0或1,0表示单条订阅，1表示组合订阅，rules参数可以不指定
 
 4. 添加脚本操作后再次访问sub-store中的singbox_template.json，就已经是把节点信息正确插入的完整可用配置了
 
