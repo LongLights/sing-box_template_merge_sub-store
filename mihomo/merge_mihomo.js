@@ -29,7 +29,7 @@ s = s.replace(
     // 精确提取分组名
     let groupMatch = head.match(/- name:\s*([^\n]+)/);
     let groupName = groupMatch ? groupMatch[1].trim() : "";
-    let add = (groupName === "中继前置") ? r : all;
+    let add = (groupName === "Relay") ? r : all;
     let merged = [...new Set([...ex, ...add])];
     return `${head}    proxies: [${merged.join(", ")}]`;
   }
