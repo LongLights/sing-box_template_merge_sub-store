@@ -1,22 +1,21 @@
-# experimental:
-#   quic-go-disable-gso: true
 #统一延迟测速和tcp并发
 unified-delay: true
 tcp-concurrent: true
 #dns配置
 dns:
   enable: true
-  ipv6: false
   use-hosts: true
   use-system-hosts: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   nameserver:
     - 223.5.5.5
+  fallback:
+    - 8.8.8.8#Default
+  proxy-server-nameserver:
+    - 223.5.5.5
   fake-ip-filter:
     #个人需求
-    - "+.migucloud.com"
-    - "+.miguvideo.com"
     - "+.ugediao.com"
     - "+.ileidian.com"
     #本地网络及保留域名
@@ -50,8 +49,8 @@ dns:
     #快捷登录
     - "graph.qq.com"
     - "+.ptlogin2.qq.com"
-  nameserver-policy:
-    "+.arpa": "127.0.0.1"
+    #cn地址
+    - "geosite:cn"
     
 proxy-groups:
   #规则匹配组
@@ -214,12 +213,11 @@ rule-providers:
 
 rules:
   #个人小众需求
-  - DST-PORT,22/3478/5201/21114-21116,DIRECT
-  - DOMAIN-SUFFIX,co.jp,JP Ali
-  - DOMAIN-keyword,stun,DIRECT
-  - DOMAIN-SUFFIX,turn.cloudflare.com,DIRECT
   - DOMAIN-SUFFIX,ghfast.top,DIRECT
   #分流规则
+  - DST-PORT,3478,DIRECT
+  - DOMAIN-keyword,stun,DIRECT
+  - DST-PORT,5201,DIRECT
   - DOMAIN-SUFFIX,emby.bid,BlackCat-EMBY
   - DOMAIN-SUFFIX,emby.men,BlackCat-EMBY
   - DOMAIN-SUFFIX,emby.date,BlackCat-EMBY
