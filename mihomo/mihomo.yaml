@@ -9,11 +9,7 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   nameserver:
-    - 223.5.5.5
-  fallback:
-    - 8.8.8.8#Default
-  proxy-server-nameserver:
-    - 223.5.5.5
+    - 119.29.29.29
   fake-ip-filter:
     #本地网络及保留域名
     - "*.lan"
@@ -85,10 +81,6 @@ proxy-groups:
     type: select
     proxies: [Default, Auto, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Telegram.png
-  - name: BiliBili
-    type: select
-    proxies: [DIRECT, Default, Auto]
-    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/bilibili.png
   - name: BlackCat-EMBY
     type: select
     proxies: [Default, Auto, DIRECT]
@@ -199,20 +191,13 @@ rule-providers:
     format: mrs
     url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hulu.mrs"
     path: ./ruleset/hulu.mrs
-    interval: 86400
-  bilibili:
-    type: http
-    behavior: domain
-    format: mrs
-    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bilibili.mrs"
-    path: ./ruleset/bilibili.mrs
-    interval: 86400
 
 rules:
   #个人小众需求
   - DST-PORT,3478,DIRECT
   - DOMAIN-keyword,stun,DIRECT
   - DST-PORT,5201,DIRECT
+  - DOMAIN-SUFFIX,migucloud.com,DIRECT
   - DOMAIN-SUFFIX,ghfast.top,DIRECT
   #分流规则
   - DOMAIN-SUFFIX,emby.bid,BlackCat-EMBY
@@ -221,7 +206,6 @@ rules:
   - DOMAIN-SUFFIX,emby.loan,BlackCat-EMBY
   - DOMAIN-SUFFIX,emby.trade,BlackCat-EMBY
   - DOMAIN-SUFFIX,uuuoo.cc,BlackCat-EMBY
-  - RULE-SET,bilibili,BiliBili
   - RULE-SET,paypal,PayPal
   - RULE-SET,aiservice,AI-Service
   - RULE-SET,tiktok,TikTok
