@@ -67,7 +67,7 @@
       "address": ["172.18.0.1/30", "fdfe:dcba:9876::1/126"],
       "mtu": 9000,
       "auto_route": true,
-      "route_exclude_address": ["10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16"],
+      "route_exclude_address": ["10.0.0.0/8", "192.168.0.0/16"],
       "route_exclude_address_set": ["cnip"],
       "strict_route": true,
       "endpoint_independent_nat": false,
@@ -150,22 +150,6 @@
         "tag": "cnsite",
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/cn.srs"
-      },
-      {
-        "tag": "privatesite",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/private.srs",
-        "update_interval": "24h",
-        "download_detour": "Default"
-      },
-      {
-        "tag": "privateip",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/private.srs",
-        "update_interval": "24h",
-        "download_detour": "Default"
       },
       {
         "tag": "cnip",
@@ -285,6 +269,10 @@
         "outbound": "Direct-Out"
       },
       {
+        "ip_is_private": true,
+        "outbound": "Direct-Out"
+      },
+      {
         "protocol": "bittorrent",
         "outbound": "Direct-Out"
       },
@@ -329,7 +317,7 @@
         "outbound": "Default"
       },
       {
-        "rule_set": ["privatesite", "cngames"],
+        "rule_set": "cngames",
         "outbound": "Direct-Out"
       },
       {
@@ -344,7 +332,7 @@
         "outbound": "Streaming-Media"
       },
       {
-        "rule_set": ["privateip", "cnip"],
+        "rule_set": "cnip",
         "outbound": "Direct-Out"
       }
     ]
