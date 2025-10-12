@@ -68,7 +68,7 @@
       "mtu": 9000,
       "auto_route": true,
       "route_exclude_address": ["10.0.0.0/8", "192.168.0.0/16"],
-      "route_exclude_address_set": ["cnip"],
+      "route_exclude_address_set": "cnip",
       "strict_route": true,
       "endpoint_independent_nat": false,
       "stack": "mixed",
