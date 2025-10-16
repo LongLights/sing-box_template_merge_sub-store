@@ -133,8 +133,13 @@
     },
     {
       "type": "selector",
-      "tag": "BlackCat-EMBY",
+      "tag": "Instagram",
       "outbounds": ["Default", "Auto"]
+    },
+    {
+      "type": "selector",
+      "tag": "BlackCat-EMBY",
+      "outbounds": ["Default", "Auto", "Direct-Out"]
     },
     {
       "type": "direct",
@@ -197,6 +202,14 @@
         "type": "remote",
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/tiktok.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "Instagram",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/instagram.srs",
         "update_interval": "24h",
         "download_detour": "Default"
       },
@@ -290,7 +303,7 @@
         "outbound": "Default"
       },
       {
-        "domain_suffix": ["uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade"],
+        "domain_suffix": ["uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
         "outbound": "BlackCat-EMBY"
       },
       {
@@ -304,6 +317,10 @@
       {
         "rule_set": "tiktok",
         "outbound": "TikTok"
+      },
+      {
+        "rule_set": "Instagram",
+        "outbound": "Instagram"
       },
       {
         "rule_set": "aiservice",
