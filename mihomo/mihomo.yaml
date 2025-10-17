@@ -8,8 +8,17 @@ dns:
   use-system-hosts: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  respect-rules: true
   nameserver:
+    - 1.1.1.1
+    - 8.8.8.8
+  proxy-server-nameserver:
     - 119.29.29.29
+    - 114.114.114.114
+  nameserver-policy:
+    'rule-set:cnsite':
+    - 119.29.29.29
+    - 114.114.114.114
   fake-ip-filter:
     #本地网络及保留域名
     - "*.lan"
@@ -61,14 +70,14 @@ proxy-groups:
     type: select
     proxies: [DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TestFlight.png
-  - name: AI-Service
-    type: select
-    proxies: [Default, Auto, DIRECT]
-    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/ChatGPT.png
   - name: PayPal
     type: select
     proxies: [Default, Auto, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/PayPal.png
+  - name: AI-Service
+    type: select
+    proxies: [Default, Auto, DIRECT]
+    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/ChatGPT.png
   - name: TikTok
     type: select
     proxies: [Default, Auto, DIRECT]
@@ -81,32 +90,29 @@ proxy-groups:
     type: select
     proxies: [Default, Auto, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Telegram.png
+  - name: Instagram
+    type: select
+    proxies: [Default, Auto, DIRECT]
+    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Instagram.png
   - name: BlackCat-EMBY
     type: select
     proxies: [Default, Auto, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Emby.png
 
 rule-providers:
-  privatesite:
-    type: http
-    behavior: domain
-    format: mrs
-    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"
-    path: ./ruleset/privatesite.mrs
-    interval: 86400
-  privateip:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"
-    path: ./ruleset/privateip.mrs
-    interval: 86400
   cnip:
     type: http
     behavior: ipcidr
     format: mrs
     url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cn.mrs"
     path: ./ruleset/cnip.mrs
+    interval: 86400
+  cnsite:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cn.mrs"
+    path: ./ruleset/cnsite.mrs
     interval: 86400
   cngame:
     type: http
@@ -157,6 +163,13 @@ rule-providers:
     url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"
     path: ./ruleset/telegramip.mrs
     interval: 86400
+  instagram:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/instagram.mrs"
+    path: ./ruleset/instagram.mrs
+    interval: 86400
   netflixsite:
     type: http
     behavior: domain
@@ -206,22 +219,22 @@ rules:
   - DOMAIN-SUFFIX,emby.loan,BlackCat-EMBY
   - DOMAIN-SUFFIX,emby.trade,BlackCat-EMBY
   - DOMAIN-SUFFIX,uuuoo.cc,BlackCat-EMBY
+  - DOMAIN-SUFFIX,trkp.cc,BlackCat-EMBY
   - RULE-SET,paypal,PayPal
   - RULE-SET,aiservice,AI-Service
   - RULE-SET,tiktok,TikTok
   - RULE-SET,telegramsite,Telegram
+  - RULE-SET,instagram,Instagram
   - RULE-SET,netflixsite,Streaming-Media
   - RULE-SET,disney,Streaming-Media
   - RULE-SET,hbo,Streaming-Media
   - RULE-SET,hulu,Streaming-Media
     #以下均是核心规则
   - RULE-SET,cngame,DIRECT
-  - RULE-SET,privatesite,DIRECT
   - RULE-SET,gfw,Default
     #ip规则置下减少dns查询
   - RULE-SET,telegramip,Telegram
   - RULE-SET,netflixip,Streaming-Media
-  - RULE-SET,privateip,DIRECT
   - RULE-SET,cnip,DIRECT
     #代理规则
   - MATCH,Default
