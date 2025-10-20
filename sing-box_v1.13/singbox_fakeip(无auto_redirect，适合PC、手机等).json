@@ -67,6 +67,7 @@
       "mtu": 9000,
       "auto_route": true,
       "strict_route": true,
+      "route_exclude_address": ["10.0.0.0/8", "192.168.0.0/16"],
       "endpoint_independent_nat": false,
       "stack": "mixed",
       "platform": {
@@ -297,6 +298,10 @@
       {
         "clash_mode": "global",
         "outbound": "Default"
+      },
+      {
+        "port": [3478, 5201],
+        "outbound": "Direct-Out"
       },
       {
         "domain_suffix": ["uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
