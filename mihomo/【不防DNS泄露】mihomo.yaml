@@ -8,15 +8,7 @@ dns:
   use-system-hosts: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  respect-rules: true
   nameserver:
-    - 1.1.1.1
-    - 8.8.8.8
-  proxy-server-nameserver:
-    - 119.29.29.29
-    - 114.114.114.114
-  nameserver-policy:
-    'rule-set:cnsite':
     - 119.29.29.29
     - 114.114.114.114
   fake-ip-filter:
@@ -52,7 +44,7 @@ dns:
     - "graph.qq.com"
     - "+.ptlogin2.qq.com"
     #cn地址
-    - "geosite:cn"
+    - "rule-set:cnsite"
     
 proxy-groups:
   #规则匹配组
@@ -208,10 +200,10 @@ rule-providers:
 rules:
   #个人小众需求
   - DST-PORT,3478,DIRECT
-  - DOMAIN-keyword,stun,DIRECT
   - DST-PORT,5201,DIRECT
   - DOMAIN-SUFFIX,migucloud.com,DIRECT
   - DOMAIN-SUFFIX,ghfast.top,DIRECT
+  - DOMAIN-SUFFIX,services.googleapis.cn,Default
   #分流规则
   - DOMAIN-SUFFIX,emby.bid,BlackCat-EMBY
   - DOMAIN-SUFFIX,emby.men,BlackCat-EMBY
