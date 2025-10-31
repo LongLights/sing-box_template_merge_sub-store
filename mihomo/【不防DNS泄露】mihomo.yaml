@@ -50,7 +50,7 @@ proxy-groups:
   #规则匹配组
   - name: Default
     type: select
-    proxies: [Auto, DIRECT]
+    proxies: [Auto]
     icon: https://raw.githubusercontent.com/Orz-3/mini/refs/heads/master/Color/Kuai.png
   - name: Auto
     type: url-test
@@ -64,27 +64,27 @@ proxy-groups:
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TestFlight.png
   - name: PayPal
     type: select
-    proxies: [Default, Auto, DIRECT]
+    proxies: [Default, Auto]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/PayPal.png
   - name: AI-Service
     type: select
-    proxies: [Default, Auto, DIRECT]
+    proxies: [Default, Auto]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/ChatGPT.png
   - name: TikTok
     type: select
-    proxies: [Default, Auto, DIRECT]
+    proxies: [Default, Auto]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TikTok.png
   - name: Streaming-Media
     type: select
-    proxies: [Default, Auto, DIRECT]
+    proxies: [Default, Auto]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Netflix.png
   - name: Telegram
     type: select
-    proxies: [Default, Auto, DIRECT]
+    proxies: [Default, Auto]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Telegram.png
   - name: Instagram
     type: select
-    proxies: [Default, Auto, DIRECT]
+    proxies: [Default, Auto]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Instagram.png
   - name: BlackCat-EMBY
     type: select
