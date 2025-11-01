@@ -20,6 +20,12 @@
   "dns": {
     "servers": [
       {
+        "tag": "proxy_dns",
+        "type": "https",
+        "server": "8.8.8.8",
+        "detour": "Default"
+      },
+      {
         "tag": "cn_dns",
         "type": "udp",
         "server": "119.29.29.29"
@@ -49,7 +55,8 @@
         "server": "fake_dns",
         "rewrite_ttl": 1
       }
-    ]
+    ],
+    "final": "proxy_dns"
   },
   "inbounds": [
     {
@@ -64,6 +71,13 @@
       "strict_route": true,
       "endpoint_independent_nat": false,
       "stack": "mixed",
+      "platform": {
+        "http_proxy": {
+          "enabled": true,
+          "server": "127.0.0.1",
+          "server_port": 7890
+        }
+      },
       "auto_redirect": true
     },
     {
