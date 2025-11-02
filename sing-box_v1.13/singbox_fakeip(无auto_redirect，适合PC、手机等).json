@@ -22,7 +22,7 @@
       {
         "tag": "proxy_dns",
         "type": "https",
-        "server": "8.8.8.8",
+        "server": "1.1.1.1",
         "detour": "Default"
       },
       {
@@ -55,8 +55,7 @@
         "server": "fake_dns",
         "rewrite_ttl": 1
       }
-    ],
-    "final": "proxy_dns"
+    ]
   },
   "inbounds": [
     {
@@ -70,14 +69,7 @@
       "route_exclude_address_set": "cnip",
       "strict_route": true,
       "endpoint_independent_nat": false,
-      "stack": "mixed",
-      "platform": {
-        "http_proxy": {
-          "enabled": true,
-          "server": "127.0.0.1",
-          "server_port": 7890
-        }
-      }
+      "stack": "mixed"
     },
     {
       "type": "mixed",
@@ -273,7 +265,16 @@
         "action": "sniff"
       },
       {
-        "protocol": "dns",
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "protocol": "dns"
+          },
+          {
+            "port": 53
+          }
+        ],
         "action": "hijack-dns"
       },
       {
@@ -302,6 +303,10 @@
       },
       {
         "port": [3478, 5201],
+        "outbound": "Direct-Out"
+      },
+      {
+        "domain_suffix": ["ottiptv.cc"],
         "outbound": "Direct-Out"
       },
       {
