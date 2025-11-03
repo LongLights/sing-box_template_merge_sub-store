@@ -6,19 +6,18 @@ dns:
   enable: true
   use-hosts: true
   use-system-hosts: true
-  enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/16
   nameserver:
-    - 119.29.29.29
     - 114.114.114.114
+    - 119.29.29.29
   fake-ip-filter:
+    - "+.migucloud.com"
     #本地网络及保留域名
-    - "*.lan"
-    - "*.local"
-    - "*.localhost"
-    - "*.localdomain"
-    - "*.home.arpa"
-    - "*.invalid"
+    - "+.lan"
+    - "+.local"
+    - "+.localhost"
+    - "+.localdomain"
+    - "+.home.arpa"
+    - "+.invalid"
     - "+.miwifi.com"
     - "+.msftconnecttest.com"
     - "+.msftncsi.com"
@@ -86,10 +85,14 @@ proxy-groups:
     type: select
     proxies: [Default, Auto]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Instagram.png
-  - name: BlackCat-EMBY
+  - name: Emby
     type: select
     proxies: [Default, Auto, DIRECT]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Emby.png
+  - name: BiliBili
+    type: select
+    proxies: [DIRECT, Default, Auto]
+    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/bilibili_3.png
 
 rule-providers:
   cnip:
@@ -196,6 +199,21 @@ rule-providers:
     format: mrs
     url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hulu.mrs"
     path: ./ruleset/hulu.mrs
+    interval: 86400
+  bilibili:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bilibili.mrs"
+    path: ./ruleset/bilibili.mrs
+    interval: 86400
+  emby:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-emby.mrs"
+    path: ./ruleset/emby.mrs
+    interval: 86400
 
 rules:
   #个人小众需求
@@ -206,13 +224,14 @@ rules:
   - DOMAIN-SUFFIX,ottiptv.cc,DIRECT
   - DOMAIN-SUFFIX,services.googleapis.cn,Default
   #分流规则
-  - DOMAIN-SUFFIX,emby.bid,BlackCat-EMBY
-  - DOMAIN-SUFFIX,emby.men,BlackCat-EMBY
-  - DOMAIN-SUFFIX,emby.date,BlackCat-EMBY
-  - DOMAIN-SUFFIX,emby.loan,BlackCat-EMBY
-  - DOMAIN-SUFFIX,emby.trade,BlackCat-EMBY
-  - DOMAIN-SUFFIX,uuuoo.cc,BlackCat-EMBY
-  - DOMAIN-SUFFIX,trkp.cc,BlackCat-EMBY
+  - DOMAIN-SUFFIX,emby.bid,Emby
+  - DOMAIN-SUFFIX,emby.men,Emby
+  - DOMAIN-SUFFIX,emby.date,Emby
+  - DOMAIN-SUFFIX,emby.loan,Emby
+  - DOMAIN-SUFFIX,emby.trade,Emby
+  - DOMAIN-SUFFIX,uuuoo.cc,Emby
+  - DOMAIN-SUFFIX,trkp.cc,Emby
+  - RULE-SET,emby,Emby
   - RULE-SET,paypal,PayPal
   - RULE-SET,aiservice,AI-Service
   - RULE-SET,tiktok,TikTok
@@ -222,6 +241,7 @@ rules:
   - RULE-SET,disney,Streaming-Media
   - RULE-SET,hbo,Streaming-Media
   - RULE-SET,hulu,Streaming-Media
+  - RULE-SET,bilibili,BiliBili
     #以下均是核心规则
   - RULE-SET,cngame,DIRECT
   - RULE-SET,gfw,Default
