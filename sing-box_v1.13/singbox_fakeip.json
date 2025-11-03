@@ -28,7 +28,7 @@
       {
         "tag": "cn_dns",
         "type": "udp",
-        "server": "119.29.29.29"
+        "server": "114.114.114.114"
       },
       {
         "tag": "fake_dns",
@@ -66,7 +66,6 @@
       "mtu": 9000,
       "auto_route": true,
       "route_exclude_address": ["10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16", "fc00::/7"],
-      "route_exclude_address_set": "cnip",
       "strict_route": true,
       "endpoint_independent_nat": false,
       "stack": "mixed",
