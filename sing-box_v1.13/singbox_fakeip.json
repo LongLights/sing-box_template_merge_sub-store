@@ -21,7 +21,7 @@
     "servers": [
       {
         "tag": "proxy_dns",
-        "type": "https",
+        "type": "udp",
         "server": "1.1.1.1",
         "detour": "Default"
       },
@@ -128,8 +128,13 @@
     },
     {
       "type": "selector",
-      "tag": "BlackCat-EMBY",
+      "tag": "Emby",
       "outbounds": ["Default", "Auto", "Direct-Out"]
+    },
+    {
+      "type": "selector",
+      "tag": "BiliBili",
+      "outbounds": ["Direct-Out", "Default", "Auto"]
     },
     {
       "type": "direct",
@@ -258,6 +263,22 @@
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/hulu.srs",
         "update_interval": "24h",
         "download_detour": "Default"
+      },
+      {
+        "tag": "bilibili",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/bilibili.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "emby",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-emby.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
       }
     ],
     "rules": [
@@ -311,7 +332,11 @@
       },
       {
         "domain_suffix": ["uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
-        "outbound": "BlackCat-EMBY"
+        "outbound": "Emby"
+      },
+      {
+        "rule_set": "emby",
+        "outbound": "Emby"
       },
       {
         "rule_set": "paypal",
@@ -338,12 +363,16 @@
         "outbound": "Streaming-Media"
       },
       {
-        "rule_set": "gfw",
-        "outbound": "Default"
+        "rule_set": "bilibili",
+        "outbound": "BiliBili"
       },
       {
         "rule_set": "cngames",
         "outbound": "Direct-Out"
+      },
+      {
+        "rule_set": "gfw",
+        "outbound": "Default"
       },
       {
         "action": "resolve"
