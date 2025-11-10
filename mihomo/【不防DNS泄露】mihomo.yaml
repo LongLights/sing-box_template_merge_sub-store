@@ -10,6 +10,7 @@ dns:
     - 114.114.114.114
     - 119.29.29.29
   fake-ip-filter:
+    - "+.ileidian.com"
     - "+.migucloud.com"
     #本地网络及保留域名
     - "+.lan"
@@ -32,7 +33,10 @@ dns:
     - "*.ntp.org.cn"
     - "*.time.edu.cn"
     #STUN 服务
-    - "+.stun"
+    - "+.stun.*.*"
+    - "+.stun.*.*.*"
+    - "+.stun.*.*.*.*"
+    - "+.stun.*.*.*.*.*"
     - turn.cloudflare.com
     - "+.rustdesk.com"
     #Google
@@ -217,7 +221,6 @@ rule-providers:
 
 rules:
   #个人小众需求
-  - DST-PORT,3478,DIRECT
   - DST-PORT,5201,DIRECT
   - DOMAIN-SUFFIX,migucloud.com,DIRECT
   - DOMAIN-SUFFIX,ghfast.top,DIRECT
