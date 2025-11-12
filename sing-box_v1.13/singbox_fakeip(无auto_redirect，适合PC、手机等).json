@@ -310,10 +310,6 @@
         "outbound": "Direct-Out"
       },
       {
-        "protocol": "stun",
-        "outbound": "Direct-Out"
-      },
-      {
         "clash_mode": "direct",
         "outbound": "Direct-Out"
       },
@@ -322,7 +318,7 @@
         "outbound": "Default"
       },
       {
-        "port": [3478, 5201],
+        "port": [22, 5201],
         "outbound": "Direct-Out"
       },
       {
