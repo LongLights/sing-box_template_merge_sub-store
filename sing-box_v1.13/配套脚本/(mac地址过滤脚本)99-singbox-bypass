@@ -1,41 +1,57 @@
 #!/bin/sh
 
-# 请把本文件放在/etc/hotplug.d/net/下，跟随sing-box启动生效
-
+# 只在 "singbox_tun" 接口被 "add" (添加) 时运行
 if [ "$ACTION" != "add" ] || [ "$INTERFACE" != "singbox_tun" ]; then
     exit 0
 fi
 
-sleep 2
+# (V13 核心) 轮询等待 "prerouting" 和 "prerouting_udp_icmp" 链出现
+RETRY_COUNT=15
+CHAINS_EXIST=0
+while [ $RETRY_COUNT -gt 0 ]; do
+    sleep 1
+    # 检查 *两个* 目标链是否都已存在
+    if nft list chain inet sing-box prerouting >/dev/null 2>&1 && \
+       nft list chain inet sing-box prerouting_udp_icmp >/dev/null 2>&1; then
+        CHAINS_EXIST=1
+        break
+    fi
+    RETRY_COUNT=$((RETRY_COUNT - 1))
+done
+
+# 如果 15 秒后 chains 仍不存在，记录错误并退出
+if [ $CHAINS_EXIST -eq 0 ]; then
+    echo "[$(date)] sing-box V13 hotplug: 'prerouting' chains not found after 15s. Aborting." >> /tmp/sing-box-hotplug.log
+    exit 1
+fi
+
+# --- Chains 已确认存在，开始执行 ---
 
 # === 在下方定义您要旁路的 MAC 地址 ===
 BYPASS_MACS="{ bc:24:11:bd:dd:43, bb:bb:bb:bb:bb:bb }"
 # === 定义结束 ===
 
-
-# --- 开始执行 nftables 操作 ---
-
+# 1. Set 逻辑 (如果已存在则跳过)
 nft add set inet sing-box bypass_mac_set { type ether_addr\; }
 nft flush set inet sing-box bypass_mac_set
 nft add element inet sing-box bypass_mac_set $BYPASS_MACS
 
+# 2. Chain 逻辑 (如果已存在则清空，否则创建)
 nft add chain inet sing-box mac_bypass_chain
 nft flush chain inet sing-box mac_bypass_chain
 nft add rule inet sing-box mac_bypass_chain ether saddr @bypass_mac_set accept
-
-# MAC 不匹配 -> 'return'
 nft add rule inet sing-box mac_bypass_chain return
 
-#    为 'prerouting' 链 (TCP) 插入 'jump'
+# 3. Jump 逻辑 (此时 prerouting 链 100% 存在)
 LIST_PREROUTING=$(nft list chain inet sing-box prerouting 2>/dev/null)
 if [ -n "$LIST_PREROUTING" ] && ! echo "$LIST_PREROUTING" | grep -q "jump mac_bypass_chain"; then
     nft insert rule inet sing-box prerouting jump mac_bypass_chain
 fi
 
-#    为 'prerouting_udp_icmp' 链 (UDP) 插入 'jump'
 LIST_PREROUTING_UDP=$(nft list chain inet sing-box prerouting_udp_icmp 2>/dev/null)
 if [ -n "$LIST_PREROUTING_UDP" ] && ! echo "$LIST_PREROUTING_UDP" | grep -q "jump mac_bypass_chain"; then
     nft insert rule inet sing-box prerouting_udp_icmp jump mac_bypass_chain
 fi
 
+echo "[$(date)] sing-box V13 hotplug: Rules successfully inserted." >> /tmp/sing-box-hotplug.log
 exit 0
