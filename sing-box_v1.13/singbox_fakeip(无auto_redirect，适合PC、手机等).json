@@ -47,6 +47,10 @@
         "server": "fake_dns"
       },
       {
+        "domain_suffix": ["ileidian.com", ".cn"],
+        "server": "cn_dns"
+      },
+      {
         "rule_set": "cnsite",
         "server": "cn_dns"
       },
@@ -282,7 +286,32 @@
     ],
     "rules": [
       {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "port": 443
+          },
+          {
+            "network": "udp"
+          }
+        ],
+        "action": "reject"
+      },
+      {
         "action": "sniff"
+      },
+      {
+        "network": "icmp",
+        "outbound": "Direct-Out"
+      },
+      {
+        "protocol": "bittorrent",
+        "outbound": "Direct-Out"
+      },
+      {
+        "protocol": "quic",
+        "action": "reject"
       },
       {
         "type": "logical",
@@ -298,15 +327,7 @@
         "action": "hijack-dns"
       },
       {
-        "network": "icmp",
-        "outbound": "Direct-Out"
-      },
-      {
         "ip_is_private": true,
-        "outbound": "Direct-Out"
-      },
-      {
-        "protocol": "bittorrent",
         "outbound": "Direct-Out"
       },
       {
@@ -318,7 +339,7 @@
         "outbound": "Default"
       },
       {
-        "port": [22, 5201],
+        "port": [5201],
         "outbound": "Direct-Out"
       },
       {
@@ -326,7 +347,7 @@
         "outbound": "Direct-Out"
       },
       {
-        "domain_suffix": ["uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
+        "domain_suffix": ["uhdnow.com", "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
         "outbound": "Emby"
       },
       {

@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# 该文件放置于/etc/hotplug.d/net/
 # 只在 "singbox_tun" 接口被 "add" (添加) 时运行
 if [ "$ACTION" != "add" ] || [ "$INTERFACE" != "singbox_tun" ]; then
     exit 0
