@@ -1,11 +1,11 @@
 #!/bin/sh
-# 该文件放置于/etc/hotplug.d/net/
+# 把本脚本放在 /etc/hotplug.d/net/ 目录下
 # 只在 "singbox_tun" 接口被 "add" (添加) 时运行
 if [ "$ACTION" != "add" ] || [ "$INTERFACE" != "singbox_tun" ]; then
     exit 0
 fi
 
-# (V13 核心) 轮询等待 "prerouting" 和 "prerouting_udp_icmp" 链出现
+# 轮询等待 "prerouting" 和 "prerouting_udp_icmp" 链出现
 RETRY_COUNT=15
 CHAINS_EXIST=0
 while [ $RETRY_COUNT -gt 0 ]; do
@@ -21,7 +21,7 @@ done
 
 # 如果 15 秒后 chains 仍不存在，记录错误并退出
 if [ $CHAINS_EXIST -eq 0 ]; then
-    echo "[$(date)] sing-box V13 hotplug: 'prerouting' chains not found after 15s. Aborting." >> /tmp/sing-box-hotplug.log
+    echo "[$(date)] sing-box hotplug: 'prerouting' chains not found after 15s. Aborting." >> /tmp/sing-box-hotplug.log
     exit 1
 fi
 
@@ -53,5 +53,5 @@ if [ -n "$LIST_PREROUTING_UDP" ] && ! echo "$LIST_PREROUTING_UDP" | grep -q "jum
     nft insert rule inet sing-box prerouting_udp_icmp jump mac_bypass_chain
 fi
 
-echo "[$(date)] sing-box V13 hotplug: Rules successfully inserted." >> /tmp/sing-box-hotplug.log
+echo "[$(date)] sing-box hotplug: Rules successfully inserted." >> /tmp/sing-box-hotplug.log
 exit 0
