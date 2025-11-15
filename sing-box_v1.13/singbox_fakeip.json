@@ -300,19 +300,11 @@
         "action": "reject"
       },
       {
-        "action": "sniff"
-      },
-      {
         "network": "icmp",
         "outbound": "Direct-Out"
       },
       {
-        "protocol": "bittorrent",
-        "outbound": "Direct-Out"
-      },
-      {
-        "protocol": "quic",
-        "action": "reject"
+        "action": "sniff"
       },
       {
         "type": "logical",
@@ -338,6 +330,14 @@
       {
         "clash_mode": "global",
         "outbound": "Default"
+      },
+      {
+        "protocol": "quic",
+        "action": "reject"
+      },
+      {
+        "protocol": "bittorrent",
+        "outbound": "Direct-Out"
       },
       {
         "port": [5201],
