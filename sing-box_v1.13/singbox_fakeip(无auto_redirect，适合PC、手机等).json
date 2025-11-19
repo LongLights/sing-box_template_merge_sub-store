@@ -59,8 +59,7 @@
         "server": "fake_dns",
         "rewrite_ttl": 1
       }
-    ],
-    "disable_cache": true
+    ]
   },
   "inbounds": [
     {
