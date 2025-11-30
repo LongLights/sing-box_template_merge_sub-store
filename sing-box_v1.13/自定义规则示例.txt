@@ -5,6 +5,6 @@
   },
   {
     "domain_suffix": "co.jp",
-    "outbound": "日本 阿里云国际"
+    "outbound": "TikTok"
   }
 ]

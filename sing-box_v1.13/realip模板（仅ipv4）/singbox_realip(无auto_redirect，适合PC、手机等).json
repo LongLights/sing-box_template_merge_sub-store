@@ -1,0 +1,488 @@
+{
+  "experimental": {
+    "clash_api": {
+      "external_controller": "0.0.0.0:9090",
+      "external_ui": "ui",
+      "secret": "",
+      "external_ui_download_url": "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip",
+      "external_ui_download_detour": "Default",
+      "default_mode": "rule"
+    },
+    "cache_file": {
+      "enabled": true
+    }
+  },
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "proxy_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "Default"
+      },
+      {
+        "tag": "paypal_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "PayPal"
+      },
+      {
+        "tag": "ai_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "AI-Service"
+      },
+      {
+        "tag": "tiktok_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "TikTok"
+      },
+      {
+        "tag": "media_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "Streaming-Media"
+      },
+      {
+        "tag": "telegram_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "Telegram"
+      },
+      {
+        "tag": "instagram_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "Instagram"
+      },
+      {
+        "tag": "emby_dns",
+        "type": "udp",
+        "server": "8.8.8.8",
+        "detour": "Emby"
+      },
+      {
+        "tag": "cn_dns",
+        "type": "udp",
+        "server": "114.114.114.114"
+      }
+    ],
+    "rules": [
+      {
+        "clash_mode": "direct",
+        "server": "cn_dns"
+      },
+      {
+        "clash_mode": "global",
+        "server": "proxy_dns"
+      },
+      {
+        "rule_set": "paypal",
+        "server": "paypal_dns"
+      },
+      {
+        "rule_set": "aiservice",
+        "server": "ai_dns"
+      },
+      {
+        "rule_set": "tiktok",
+        "server": "tiktok_dns"
+      },
+      {
+        "rule_set": ["netflixsite", "hbo", "disney", "hulu"],
+        "server": "media_dns"
+      },
+      {
+        "rule_set": "telegramsite",
+        "server": "telegram_dns"
+      },
+      {
+        "rule_set": "instagram",
+        "server": "instagram_dns"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "rule_set": "emby"
+          },
+          {
+            "domain_suffix": ["uhdnow.com", "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"]
+          }
+        ],
+        "server": "emby_dns"
+      },
+      {
+        "rule_set": "gfw",
+        "server": "proxy_dns"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "domain_suffix": ["ileidian.com", ".cn"]
+          },
+          {
+            "rule_set": "cnsite"
+          }
+        ],
+        "server": "cn_dns"
+      }
+    ],
+    "final": "proxy_dns",
+    "strategy": "ipv4_only"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "interface_name": "singbox_tun",
+      "address": ["172.18.0.1/30"],
+      "mtu": 9000,
+      "auto_route": true,
+      "route_exclude_address": ["10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16"],
+      "strict_route": true,
+      "endpoint_independent_nat": false,
+      "stack": "mixed"
+    },
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "127.0.0.1",
+      "listen_port": 7890
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "Default",
+      "outbounds": ["Auto"]
+    },
+    {
+      "type": "urltest",
+      "tag": "Auto",
+      "outbounds": [],
+      "interval": "3m",
+      "tolerance": 30
+    },
+    {
+      "type": "selector",
+      "tag": "Relay",
+      "outbounds": ["Direct-Out"]
+    },
+    {
+      "type": "selector",
+      "tag": "PayPal",
+      "outbounds": ["Default", "Auto"]
+    },
+    {
+      "type": "selector",
+      "tag": "AI-Service",
+      "outbounds": ["Default", "Auto"]
+    },
+    {
+      "type": "selector",
+      "tag": "TikTok",
+      "outbounds": ["Default", "Auto"]
+    },
+    {
+      "type": "selector",
+      "tag": "Streaming-Media",
+      "outbounds": ["Default", "Auto"]
+    },
+    {
+      "type": "selector",
+      "tag": "Telegram",
+      "outbounds": ["Default", "Auto"]
+    },
+    {
+      "type": "selector",
+      "tag": "Instagram",
+      "outbounds": ["Default", "Auto"]
+    },
+    {
+      "type": "selector",
+      "tag": "Emby",
+      "outbounds": ["Default", "Auto", "Direct-Out"]
+    },
+    {
+      "type": "selector",
+      "tag": "BiliBili",
+      "outbounds": ["Direct-Out", "Default", "Auto"]
+    },
+    {
+      "type": "direct",
+      "tag": "Direct-Out"
+    }
+  ],
+  "route": {
+    "final": "Default",
+    "auto_detect_interface": true,
+    "default_domain_resolver": "proxy_dns",
+    "rules": [
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "port": 443
+          },
+          {
+            "network": "udp"
+          }
+        ],
+        "action": "reject"
+      },
+      {
+        "network": "icmp",
+        "outbound": "Direct-Out"
+      },
+      {
+        "action": "sniff"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "protocol": "dns"
+          },
+          {
+            "port": 53
+          }
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "Direct-Out"
+      },
+      {
+        "clash_mode": "direct",
+        "outbound": "Direct-Out"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "Default"
+      },
+      {
+        "protocol": "quic",
+        "action": "reject"
+      },
+      {
+        "protocol": "bittorrent",
+        "outbound": "Direct-Out"
+      },
+      {
+        "port": [5201],
+        "outbound": "Direct-Out"
+      },
+      {
+        "domain_suffix": ["ottiptv.cc"],
+        "outbound": "Direct-Out"
+      },
+      {
+        "domain_suffix": ["uhdnow.com", "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
+        "outbound": "Emby"
+      },
+      {
+        "rule_set": "emby",
+        "outbound": "Emby"
+      },
+      {
+        "rule_set": "paypal",
+        "outbound": "PayPal"
+      },
+      {
+        "rule_set": "telegramsite",
+        "outbound": "Telegram"
+      },
+      {
+        "rule_set": "tiktok",
+        "outbound": "TikTok"
+      },
+      {
+        "rule_set": "instagram",
+        "outbound": "Instagram"
+      },
+      {
+        "rule_set": "aiservice",
+        "outbound": "AI-Service"
+      },
+      {
+        "rule_set": ["netflixsite", "hbo", "disney", "hulu"],
+        "outbound": "Streaming-Media"
+      },
+      {
+        "rule_set": "bilibili",
+        "outbound": "BiliBili"
+      },
+      {
+        "rule_set": "cngames",
+        "outbound": "Direct-Out"
+      },
+      {
+        "rule_set": "gfw",
+        "outbound": "Default"
+      },
+      {
+        "action": "resolve"
+      },
+      {
+        "rule_set": "telegramip",
+        "outbound": "Telegram"
+      },
+      {
+        "rule_set": "netflixip",
+        "outbound": "Streaming-Media"
+      },
+      {
+        "rule_set": "cnip",
+        "outbound": "Direct-Out"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "cnsite",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/cn.srs"
+      },
+      {
+        "tag": "cnip",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/cn.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "cngames",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-games-!cn@cn.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "gfw",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/gfw.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "aiservice",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-ai-!cn.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "paypal",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/paypal.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "tiktok",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/tiktok.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "instagram",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/instagram.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "telegramip",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/telegram.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "telegramsite",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/telegram.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "netflixsite",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/netflix.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "netflixip",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/netflix.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "disney",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/disney.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "hbo",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/hbo.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "hulu",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/hulu.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "bilibili",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/bilibili.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      },
+      {
+        "tag": "emby",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/category-emby.srs",
+        "update_interval": "24h",
+        "download_detour": "Default"
+      }
+    ]
+  }
+}
