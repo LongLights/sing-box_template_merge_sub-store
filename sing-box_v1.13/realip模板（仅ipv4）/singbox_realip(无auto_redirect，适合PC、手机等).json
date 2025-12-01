@@ -137,6 +137,7 @@
       }
     ],
     "final": "proxy_dns",
+    "disable_cache": true,
     "strategy": "ipv4_only"
   },
   "inbounds": [
