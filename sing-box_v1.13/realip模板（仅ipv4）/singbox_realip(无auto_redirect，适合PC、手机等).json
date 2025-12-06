@@ -20,50 +20,50 @@
     "servers": [
       {
         "tag": "proxy_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "Default"
       },
       {
         "tag": "paypal_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "PayPal"
       },
       {
         "tag": "ai_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "AI-Service"
       },
       {
         "tag": "tiktok_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "TikTok"
       },
       {
         "tag": "media_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "Streaming-Media"
       },
       {
         "tag": "telegram_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "Telegram"
       },
       {
         "tag": "instagram_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "Instagram"
       },
       {
         "tag": "emby_dns",
-        "type": "udp",
-        "server": "8.8.8.8",
+        "type": "https",
+        "server": "1.1.1.1",
         "detour": "Emby"
       },
       {
