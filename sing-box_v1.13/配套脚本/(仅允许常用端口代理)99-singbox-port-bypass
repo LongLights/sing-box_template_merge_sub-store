@@ -1,0 +1,67 @@
+#!/bin/sh
+# 把本脚本放在 /etc/hotplug.d/net/ 目录下
+# 
+# === 策略说明 ===
+# 实行“端口白名单”机制。仅代理常用端口，其他端口(游戏/P2P/STUN打洞/BT下载)直连。
+
+if [ "$ACTION" != "add" ] || [ "$INTERFACE" != "singbox_tun" ]; then
+    exit 0
+fi
+
+# 轮询等待 sing-box 链
+RETRY_COUNT=15
+while [ $RETRY_COUNT -gt 0 ]; do
+    sleep 1
+    if nft list chain inet sing-box prerouting >/dev/null 2>&1; then
+        break
+    fi
+    RETRY_COUNT=$((RETRY_COUNT - 1))
+done
+
+if [ $RETRY_COUNT -eq 0 ]; then
+    exit 1
+fi
+
+# === 配置区域 ===
+# 常用端口列表 (用于决定哪些流量 *必须* 走代理)
+# 包含：DNS, HTTP/S, Mail, DoT/DoH, 常见即时通讯端口
+COMMON_PORTS="21, 22, 23, 53, 80, 123, 143, 194, 443, 465, 587, 853, 993, 995, 998, 2052, 2053, 2082, 2083, 2086, 2095, 2096, 5222, 5228, 5229, 5230, 8080, 8443, 8880, 8888, 8889"
+# === 结束配置 ===
+
+# 1. 定义 Set
+# inet_service 类型同时支持 TCP 和 UDP 端口匹配
+nft add set inet sing-box common_ports_set { type inet_service\; flags interval\; }
+nft flush set inet sing-box common_ports_set
+nft add element inet sing-box common_ports_set { $COMMON_PORTS }
+
+# 2. 定义 Chain
+nft add chain inet sing-box port_bypass_chain
+nft flush chain inet sing-box port_bypass_chain
+
+# === 3. 核心规则注入 (关键逻辑) ===
+
+# [规则 A: UDP]
+# 逻辑：如果是 UDP 且 目标端口不在常用列表中 -> 直连(ACCEPT)
+nft add rule inet sing-box port_bypass_chain meta l4proto udp th dport != @common_ports_set accept
+
+# [规则 B: TCP]
+# 逻辑：如果是 TCP 且 目标端口不在常用列表中 -> 直连(ACCEPT)
+nft add rule inet sing-box port_bypass_chain meta l4proto tcp th dport != @common_ports_set accept
+
+# [规则 C: 返回]
+# 逻辑：未被上述规则 ACCEPT 的流量，返回主链继续处理 (被 sing-box 劫持)
+nft add rule inet sing-box port_bypass_chain return
+
+# === 4. 插入 Jump (挂载到 sing-box 主链) ===
+
+# 挂载 UDP 链
+if nft list chain inet sing-box prerouting_udp_icmp >/dev/null 2>&1; then
+    if ! nft list chain inet sing-box prerouting_udp_icmp | grep -q "jump port_bypass_chain"; then
+        nft insert rule inet sing-box prerouting_udp_icmp jump port_bypass_chain
+    fi
+fi
+
+# 挂载 TCP/通用 链
+if ! nft list chain inet sing-box prerouting | grep -q "jump port_bypass_chain"; then
+    nft insert rule inet sing-box prerouting jump port_bypass_chain
+fi

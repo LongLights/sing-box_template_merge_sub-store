@@ -127,7 +127,7 @@
         "mode": "or",
         "rules": [
           {
-            "domain_suffix": ["ileidian.com", ".cn"]
+            "domain_suffix": [".cn"]
           },
           {
             "rule_set": "cnsite"
@@ -247,7 +247,9 @@
         "outbound": "Direct-Out"
       },
       {
-        "action": "sniff"
+        "action": "sniff",
+        "sniffer": ["http", "tls", "quic", "dns"],
+        "timeout": "500ms"
       },
       {
         "type": "logical",

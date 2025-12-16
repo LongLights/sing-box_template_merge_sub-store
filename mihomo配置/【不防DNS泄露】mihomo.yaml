@@ -10,8 +10,6 @@ dns:
     - 114.114.114.114
     - 119.29.29.29
   fake-ip-filter:
-    - "+.ileidian.com"
-    - "+.migucloud.com"
     #本地网络及保留域名
     - "+.lan"
     - "+.local"
@@ -48,7 +46,7 @@ dns:
     - "+.ptlogin2.qq.com"
     #cn地址
     - "rule-set:cnsite"
-    
+
 proxy-groups:
   #规则匹配组
   - name: Default
@@ -222,18 +220,11 @@ rule-providers:
 rules:
   #个人小众需求
   - DST-PORT,5201,DIRECT
-  - DOMAIN-SUFFIX,migucloud.com,DIRECT
   - DOMAIN-SUFFIX,ghfast.top,DIRECT
   - DOMAIN-SUFFIX,ottiptv.cc,DIRECT
   - DOMAIN-SUFFIX,services.googleapis.cn,Default
   #分流规则
-  - DOMAIN-SUFFIX,emby.bid,Emby
-  - DOMAIN-SUFFIX,emby.men,Emby
-  - DOMAIN-SUFFIX,emby.date,Emby
-  - DOMAIN-SUFFIX,emby.loan,Emby
-  - DOMAIN-SUFFIX,emby.trade,Emby
-  - DOMAIN-SUFFIX,uuuoo.cc,Emby
-  - DOMAIN-SUFFIX,trkp.cc,Emby
+  - DOMAIN-SUFFIX,uhdnow.com,Emby
   - RULE-SET,emby,Emby
   - RULE-SET,paypal,PayPal
   - RULE-SET,aiservice,AI-Service
