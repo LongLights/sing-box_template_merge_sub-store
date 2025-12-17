@@ -3,12 +3,13 @@
 # 
 # === 策略说明 ===
 # 实行“端口白名单”机制。仅代理常用端口，其他端口(游戏/P2P/STUN打洞/BT下载)直连。
+# 包含对局域网设备(Prerouting)和路由器本机(Output)的双重处理。
 
 if [ "$ACTION" != "add" ] || [ "$INTERFACE" != "singbox_tun" ]; then
     exit 0
 fi
 
-# 轮询等待 sing-box 链
+# 轮询等待 sing-box 链加载完成
 RETRY_COUNT=15
 while [ $RETRY_COUNT -gt 0 ]; do
     sleep 1
@@ -34,34 +35,52 @@ nft add set inet sing-box common_ports_set { type inet_service\; flags interval\
 nft flush set inet sing-box common_ports_set
 nft add element inet sing-box common_ports_set { $COMMON_PORTS }
 
-# 2. 定义 Chain
+# 2. 定义 Chain (旁路检测链)
 nft add chain inet sing-box port_bypass_chain
 nft flush chain inet sing-box port_bypass_chain
 
 # === 3. 核心规则注入 (关键逻辑) ===
 
 # [规则 A: UDP]
-# 逻辑：如果是 UDP 且 目标端口不在常用列表中 -> 直连(ACCEPT)
+# 逻辑：如果是 UDP 且 目标端口不在常用列表中 -> 直连(ACCEPT，终止后续代理规则)
 nft add rule inet sing-box port_bypass_chain meta l4proto udp th dport != @common_ports_set accept
 
 # [规则 B: TCP]
-# 逻辑：如果是 TCP 且 目标端口不在常用列表中 -> 直连(ACCEPT)
+# 逻辑：如果是 TCP 且 目标端口不在常用列表中 -> 直连(ACCEPT，终止后续代理规则)
 nft add rule inet sing-box port_bypass_chain meta l4proto tcp th dport != @common_ports_set accept
 
 # [规则 C: 返回]
 # 逻辑：未被上述规则 ACCEPT 的流量，返回主链继续处理 (被 sing-box 劫持)
 nft add rule inet sing-box port_bypass_chain return
 
-# === 4. 插入 Jump (挂载到 sing-box 主链) ===
+# === 4. 插入 Jump 到局域网流量链 (Prerouting) ===
 
-# 挂载 UDP 链
+# 挂载 LAN UDP 链
 if nft list chain inet sing-box prerouting_udp_icmp >/dev/null 2>&1; then
     if ! nft list chain inet sing-box prerouting_udp_icmp | grep -q "jump port_bypass_chain"; then
+        # insert 默认插到最前面，确保在 sing-box 处理之前生效
         nft insert rule inet sing-box prerouting_udp_icmp jump port_bypass_chain
     fi
 fi
 
-# 挂载 TCP/通用 链
+# 挂载 LAN TCP/通用 链
 if ! nft list chain inet sing-box prerouting | grep -q "jump port_bypass_chain"; then
     nft insert rule inet sing-box prerouting jump port_bypass_chain
+fi
+
+# === 5. [新增] 插入 Jump 到本机流量链 (Output) ===
+# 修复 natmap 等本机进程不遵循端口策略的问题
+
+# 挂载本机 UDP 链
+if nft list chain inet sing-box output_udp_icmp >/dev/null 2>&1; then
+    if ! nft list chain inet sing-box output_udp_icmp | grep -q "jump port_bypass_chain"; then
+        nft insert rule inet sing-box output_udp_icmp jump port_bypass_chain
+    fi
+fi
+
+# 挂载本机 TCP/通用 链
+if nft list chain inet sing-box output >/dev/null 2>&1; then
+    if ! nft list chain inet sing-box output | grep -q "jump port_bypass_chain"; then
+        nft insert rule inet sing-box output jump port_bypass_chain
+    fi
 fi
