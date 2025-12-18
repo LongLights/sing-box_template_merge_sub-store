@@ -34,7 +34,7 @@
         "tag": "fake_dns",
         "type": "fakeip",
         "inet4_range": "11.0.0.0/16",
-        "inet6_range": "fc00::/18"
+        "inet6_range": "3ffe::/16"
       }
     ],
     "rules": [
@@ -348,7 +348,7 @@
         "outbound": "Direct-Out"
       },
       {
-        "port": [5201],
+        "port": [3478, 5201],
         "outbound": "Direct-Out"
       },
       {
