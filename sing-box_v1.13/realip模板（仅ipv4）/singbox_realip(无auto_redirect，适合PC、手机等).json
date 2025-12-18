@@ -21,55 +21,55 @@
       {
         "tag": "proxy_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "Default"
       },
       {
         "tag": "paypal_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "PayPal"
       },
       {
         "tag": "ai_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "AI-Service"
       },
       {
         "tag": "tiktok_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "TikTok"
       },
       {
         "tag": "media_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "Streaming-Media"
       },
       {
         "tag": "telegram_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "Telegram"
       },
       {
         "tag": "instagram_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "Instagram"
       },
       {
         "tag": "emby_dns",
         "type": "https",
-        "server": "1.1.1.1",
+        "server": "8.8.8.8",
         "detour": "Emby"
       },
       {
         "tag": "cn_dns",
         "type": "udp",
-        "server": "114.114.114.114"
+        "server": "119.29.29.29"
       }
     ],
     "rules": [
@@ -113,7 +113,7 @@
             "rule_set": "emby"
           },
           {
-            "domain_suffix": ["uhdnow.com", "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"]
+            "domain_suffix": ["uhdnow.com"]
           }
         ],
         "server": "emby_dns"
@@ -292,7 +292,7 @@
         "outbound": "Direct-Out"
       },
       {
-        "domain_suffix": ["uhdnow.com", "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
+        "domain_suffix": ["uhdnow.com"],
         "outbound": "Emby"
       },
       {

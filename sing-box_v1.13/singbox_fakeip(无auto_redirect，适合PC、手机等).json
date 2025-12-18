@@ -28,12 +28,12 @@
       {
         "tag": "cn_dns",
         "type": "udp",
-        "server": "114.114.114.114"
+        "server": "119.29.29.29"
       },
       {
         "tag": "fake_dns",
         "type": "fakeip",
-        "inet4_range": "198.18.0.0/15",
+        "inet4_range": "11.0.0.0/16",
         "inet6_range": "fc00::/18"
       }
     ],
@@ -47,11 +47,19 @@
         "server": "fake_dns"
       },
       {
-        "domain_suffix": ["ileidian.com", ".cn"],
-        "server": "cn_dns"
-      },
-      {
-        "rule_set": "cnsite",
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "domain_suffix": [".cn"]
+          },
+          {
+            "domain_keyword": ["stun", "turn"]
+          },
+          {
+            "rule_set": "cnsite"
+          }
+        ],
         "server": "cn_dns"
       },
       {
@@ -347,7 +355,7 @@
         "outbound": "Direct-Out"
       },
       {
-        "domain_suffix": ["uhdnow.com", "uuuoo.cc", "emby.bid", "emby.date", "emby.loan", "emby.trade", "trkp.cc"],
+        "domain_suffix": ["uhdnow.com"],
         "outbound": "Emby"
       },
       {
