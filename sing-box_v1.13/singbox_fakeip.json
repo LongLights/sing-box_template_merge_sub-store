@@ -21,14 +21,14 @@
     "servers": [
       {
         "tag": "proxy_dns",
-        "type": "udp",
+        "type": "https",
         "server": "8.8.8.8",
         "detour": "Default"
       },
       {
         "tag": "cn_dns",
         "type": "udp",
-        "server": "119.29.29.29"
+        "server": "223.5.5.5"
       },
       {
         "tag": "fake_dns",
@@ -51,7 +51,7 @@
         "mode": "or",
         "rules": [
           {
-            "domain_suffix": [".cn"]
+            "domain_suffix": ["ileidian.com", ".cn"]
           },
           {
             "domain_keyword": ["stun", "turn"]
@@ -295,19 +295,6 @@
     ],
     "rules": [
       {
-        "type": "logical",
-        "mode": "and",
-        "rules": [
-          {
-            "port": 443
-          },
-          {
-            "network": "udp"
-          }
-        ],
-        "action": "reject"
-      },
-      {
         "network": "icmp",
         "outbound": "Direct-Out"
       },
@@ -340,10 +327,6 @@
         "outbound": "Default"
       },
       {
-        "protocol": "quic",
-        "action": "reject"
-      },
-      {
         "protocol": "bittorrent",
         "outbound": "Direct-Out"
       },
@@ -352,7 +335,7 @@
         "outbound": "Direct-Out"
       },
       {
-        "domain_suffix": ["ottiptv.cc"],
+        "domain_suffix": ["ileidian.com", "ottiptv.cc"],
         "outbound": "Direct-Out"
       },
       {
