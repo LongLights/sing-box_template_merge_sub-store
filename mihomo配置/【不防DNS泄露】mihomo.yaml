@@ -1,3 +1,12 @@
+proxy-providers:
+  LongLight:
+    type: http
+    url: "<你的订阅链接>"
+    path: ./proxy_providers/LongLight.yaml
+    interval: 3600
+    proxy: DIRECT
+    size-limit: 0
+
 #统一延迟测速和tcp并发
 unified-delay: true
 tcp-concurrent: true
@@ -6,10 +15,15 @@ dns:
   enable: true
   use-hosts: true
   use-system-hosts: true
+  respect-rules: true
   nameserver:
-    - 114.114.114.114
     - 119.29.29.29
+    - 114.114.114.114
+  enhanced-mode: fake-ip
+  fake-ip-range: 11.0.0.0/16
+  fake-ip-range6: 3ffe::/16
   fake-ip-filter:
+    - "+.ileidian.com"
     #本地网络及保留域名
     - "+.lan"
     - "+.local"
@@ -36,7 +50,6 @@ dns:
     - "+.stun.*.*.*.*"
     - "+.stun.*.*.*.*.*"
     - turn.cloudflare.com
-    - "+.rustdesk.com"
     #Google
     - "lens.l.google.com"
     #米家物联网
@@ -45,6 +58,7 @@ dns:
     - "graph.qq.com"
     - "+.ptlogin2.qq.com"
     #cn地址
+    - "+.cn"
     - "rule-set:cnsite"
 
 proxy-groups:
@@ -52,49 +66,55 @@ proxy-groups:
   - name: Default
     type: select
     proxies: [Auto]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Orz-3/mini/refs/heads/master/Color/Kuai.png
   - name: Auto
     type: url-test
     url: https://www.gstatic.com/generate_204
     interval: 300
-    proxies: []
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Speedtest.png
   - name: Relay
     type: select
     proxies: [DIRECT]
+    use: [LongLight]
+    exclude-filter: "Relay"
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TestFlight.png
   - name: PayPal
     type: select
     proxies: [Default, Auto]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/PayPal.png
   - name: AI-Service
     type: select
     proxies: [Default, Auto]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/ChatGPT.png
   - name: TikTok
     type: select
     proxies: [Default, Auto]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/TikTok.png
   - name: Streaming-Media
     type: select
     proxies: [Default, Auto]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Netflix.png
   - name: Telegram
     type: select
     proxies: [Default, Auto]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Telegram.png
   - name: Instagram
     type: select
     proxies: [Default, Auto]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Instagram.png
   - name: Emby
     type: select
     proxies: [Default, Auto, DIRECT]
+    use: [LongLight]
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Emby.png
-  - name: BiliBili
-    type: select
-    proxies: [DIRECT, Default, Auto]
-    icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/bilibili_3.png
 
 rule-providers:
   cnip:
@@ -202,13 +222,6 @@ rule-providers:
     url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hulu.mrs"
     path: ./ruleset/hulu.mrs
     interval: 86400
-  bilibili:
-    type: http
-    behavior: domain
-    format: mrs
-    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bilibili.mrs"
-    path: ./ruleset/bilibili.mrs
-    interval: 86400
   emby:
     type: http
     behavior: domain
@@ -220,6 +233,7 @@ rule-providers:
 rules:
   #个人小众需求
   - DST-PORT,5201,DIRECT
+  - DOMAIN-SUFFIX,ileidian.com,DIRECT
   - DOMAIN-SUFFIX,ghfast.top,DIRECT
   - DOMAIN-SUFFIX,ottiptv.cc,DIRECT
   - DOMAIN-SUFFIX,services.googleapis.cn,Default
@@ -235,7 +249,6 @@ rules:
   - RULE-SET,disney,Streaming-Media
   - RULE-SET,hbo,Streaming-Media
   - RULE-SET,hulu,Streaming-Media
-  - RULE-SET,bilibili,BiliBili
     #以下均是核心规则
   - RULE-SET,cngame,DIRECT
   - RULE-SET,gfw,Default

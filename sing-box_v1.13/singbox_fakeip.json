@@ -28,7 +28,7 @@
       {
         "tag": "cn_dns",
         "type": "udp",
-        "server": "223.5.5.5"
+        "server": "114.114.114.114"
       },
       {
         "tag": "fake_dns",
@@ -78,6 +78,7 @@
       "mtu": 9000,
       "auto_route": true,
       "route_exclude_address": ["10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16"],
+      "route_exclude_address_set": ["cnip"],
       "strict_route": true,
       "endpoint_independent_nat": false,
       "stack": "mixed",
@@ -144,11 +145,6 @@
       "outbounds": ["Default", "Auto", "Direct-Out"]
     },
     {
-      "type": "selector",
-      "tag": "BiliBili",
-      "outbounds": ["Direct-Out", "Default", "Auto"]
-    },
-    {
       "type": "direct",
       "tag": "Direct-Out"
     }
@@ -159,8 +155,8 @@
     "default_domain_resolver": "cn_dns",
     "rule_set": [
       {
-        "type": "remote",
         "tag": "cnsite",
+        "type": "remote",
         "format": "binary",
         "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/cn.srs"
       },
@@ -277,14 +273,6 @@
         "download_detour": "Default"
       },
       {
-        "tag": "bilibili",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/bilibili.srs",
-        "update_interval": "24h",
-        "download_detour": "Default"
-      },
-      {
         "tag": "emby",
         "type": "remote",
         "format": "binary",
@@ -294,6 +282,19 @@
       }
     ],
     "rules": [
+      {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "port": 443
+          },
+          {
+            "network": "udp"
+          }
+        ],
+        "action": "reject"
+      },
       {
         "network": "icmp",
         "outbound": "Direct-Out"
@@ -325,6 +326,10 @@
       {
         "clash_mode": "global",
         "outbound": "Default"
+      },
+      {
+        "protocol": "quic",
+        "action": "reject"
       },
       {
         "protocol": "bittorrent",
@@ -369,10 +374,6 @@
       {
         "rule_set": ["netflixsite", "hbo", "disney", "hulu"],
         "outbound": "Streaming-Media"
-      },
-      {
-        "rule_set": "bilibili",
-        "outbound": "BiliBili"
       },
       {
         "rule_set": "cngames",
