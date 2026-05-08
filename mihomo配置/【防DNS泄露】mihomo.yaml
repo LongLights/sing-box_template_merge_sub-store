@@ -236,6 +236,9 @@ rule-providers:
     interval: 86400
 
 rules:
+  #屏蔽国外QUIC流量
+  - AND,(AND,(DST-PORT,443),(NETWORK,UDP)),(NOT,((RULE-SET,cnsite))),REJECT
+  - AND,(AND,(DST-PORT,443),(NETWORK,UDP)),(NOT,((RULE-SET,cnip))),REJECT
   #个人小众需求
   - DST-PORT,5201,DIRECT
   - DOMAIN-SUFFIX,ileidian.com,DIRECT
@@ -250,6 +253,7 @@ rules:
   - RULE-SET,tiktok,TikTok
   - RULE-SET,telegramsite,Telegram
   - RULE-SET,instagram,Instagram
+  - DOMAIN-SUFFIX,sexlikereal.com,Streaming-Media
   - RULE-SET,netflixsite,Streaming-Media
   - RULE-SET,disney,Streaming-Media
   - RULE-SET,hbo,Streaming-Media
