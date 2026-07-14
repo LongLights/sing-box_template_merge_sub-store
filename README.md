@@ -2,7 +2,7 @@
 
 ## 关于防 DNS 泄露
 
-本仓库的 mihomo 及 sing-box1.13 配置中，自带防 DNS 泄露功能，并且较市面主流的防泄漏方案有所优化，其运行逻辑如下：
+本仓库的 sing-box 及 mihomo 配置中，自带防 DNS 泄露功能，并且较市面主流的防泄漏方案有所优化，其运行逻辑如下：
 
 1. cn 域名列表外的所有域名，均会通过节点代理向 1.1.1.1 这类境外公共 dns 发起解析请求，不会有任何本地的 dns 请求记录，并且可以确保解析结果是真实无污染无劫持的。
 2. 根据 1 获得的无污染 ip，匹配 cn 的 ip 列表，决定是否需要代理
@@ -12,7 +12,7 @@
 这也是为什么我不推荐在路由规则中使用 geosite:cn 或!cn 这类全量的域名规则，在路由规则中，应只使用 cn 的 ip 规则进行直连 or 代理的判断
 （事实上你甚至可以用有污染的 ip 进行判断，由于只要不匹配 cn 的 ip 规则，均会通过 fakeip 代理，所以不会有什么影响）
 
-## sing-box_v1.13 配置模板使用说明（sing-box配置不再更新）
+## sing-box配置模板使用说明
 
 提供两套配置模板及一个 js 脚本，js 脚本使用参考旧版说明中的使用步骤
 
@@ -22,12 +22,7 @@
 
 其他如 Windows、安卓、iOS 均应使用有后缀的版本（不使用 auto_redirect）
 
-注：如果你的本地网络开启了 ipv6，则使用 fakeip 模板；如果本地网络没开启 ipv6，则建议使用 realip 模板，
-
-p.s. 使用配套脚本需要以下条件：
-
-1. 如果使用 openwrt 更新脚本，需要确保使用官方 ipk 方式安装（需要支持/etc/init.d/sing-box 指令）
-2. 如果使用 windows 更新脚本，不能直接下载 bat 文件，需要手动复制其中的内容自行创建 bat 文件（保存为 ANSI 编码）
+p.s. 使用openwrt配套脚本需要满足：确保使用官方 ipk 方式安装（需要支持/etc/init.d/sing-box 指令）
 
 ## 使用步骤（默认模式）
 
@@ -36,7 +31,7 @@ p.s. 使用配套脚本需要以下条件：
 3. 在 sub-store 的文件管理功能中编辑 singbox_template.json 添加一个脚本操作，并且选择链接：
 
 ```
-https://raw.githubusercontent.com/LongLights/sing-box_template_merge_sub-store/main/sing-box_v1.13/merge_all.js#name=<你在sub-store中的订阅名称>&type=<在sub-store中的订阅类型>
+https://ghfast.top/raw.githubusercontent.com/LongLights/sing-box_template_merge_sub-store/main/sing-box_v1.13/merge_all.js#name=<你在sub-store中的订阅名称>&type=<在sub-store中的订阅类型>
 ```
 
 type 可以赋值 0 或 1,0 表示单条订阅，1 表示组合订阅
