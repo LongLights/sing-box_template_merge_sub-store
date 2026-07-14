@@ -1,19 +1,30 @@
 {
     "http_clients": [
         {
-            "tag": "ruleset-client",
+            "tag": "proxy-client",
             "detour": "Default"
         }
     ],
-    "experimental": {
-        "clash_api": {
-            "external_controller": "0.0.0.0:9090",
-            "external_ui": "ui",
+    "services": [
+        {
+            "type": "api",
+            "tag": "api",
+            "listen": "0.0.0.0",
+            "listen_port": 9090,
             "secret": "",
-            "external_ui_download_url": "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip",
-            "external_ui_download_detour": "Default",
-            "default_mode": "rule"
-        },
+            "access_control_allow_origin": [ ],
+            "access_control_allow_private_network": false,
+            "dashboard": {
+                "enabled": true,
+                "path": "dashboard",
+                "download_url": "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip",
+                "http_client": "proxy-client",
+                "update_interval": "7d"
+            },
+            "tls": { }
+        }
+    ],
+    "experimental": {
         "cache_file": {
             "enabled": true,
             "store_fakeip": true
@@ -28,7 +39,7 @@
             {
                 "tag": "proxy_dns",
                 "type": "https",
-                "server": "8.8.8.8",
+                "server": "1.1.1.1",
                 "detour": "Default"
             },
             {
@@ -44,14 +55,6 @@
             }
         ],
         "rules": [
-            {
-                "clash_mode": "direct",
-                "server": "cn_dns"
-            },
-            {
-                "clash_mode": "global",
-                "server": "fake_dns"
-            },
             {
                 "type": "logical",
                 "mode": "or",
@@ -95,7 +98,7 @@
             "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
             "strict_route": true,
             "auto_redirect": true,
-            "stack": "mixed"
+            "stack": "system"
         },
         {
             "type": "mixed",
@@ -108,7 +111,7 @@
         {
             "type": "selector",
             "tag": "Default",
-            "outbounds": [ "Auto" ]
+            "outbounds": [ "Auto", "Direct-Out" ]
         },
         {
             "type": "urltest",
@@ -165,7 +168,7 @@
     "route": {
         "final": "Default",
         "auto_detect_interface": true,
-        "default_http_client": "ruleset-client",
+        "default_http_client": "proxy-client",
         "default_domain_resolver": { "server": "cn_dns" },
         "rule_set": [
             {
@@ -318,14 +321,6 @@
             {
                 "ip_is_private": true,
                 "outbound": "Direct-Out"
-            },
-            {
-                "clash_mode": "direct",
-                "outbound": "Direct-Out"
-            },
-            {
-                "clash_mode": "global",
-                "outbound": "Default"
             },
             {
                 "protocol": "quic",
