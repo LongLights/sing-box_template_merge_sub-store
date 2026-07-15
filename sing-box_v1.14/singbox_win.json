@@ -56,11 +56,18 @@
         ],
         "rules": [
             {
+                "rule_set": "gfw",
+                "query_type": [ "A", "AAAA" ],
+                "action": "route",
+                "server": "fake_dns"
+            },
+            {
                 "type": "logical",
                 "mode": "or",
+                "action": "route",
                 "rules": [
                     {
-                        "domain_suffix": [ "ileidian.com", ".cn" ]
+                        "domain_suffix": [ ".cn" ]
                     },
                     {
                         "domain_keyword": [ "stun", "turn" ]
@@ -82,6 +89,8 @@
                 "server": "cn_dns"
             },
             {
+                "action": "route",
+                "query_type": [ "A", "AAAA" ],
                 "server": "fake_dns",
                 "rewrite_ttl": 1
             }
@@ -97,7 +106,7 @@
             "auto_route": true,
             "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
             "strict_route": true,
-            "stack": "system",
+            "stack": "mixed",
             "platform": {
                 "http_proxy": {
                     "enabled": true,
@@ -343,7 +352,7 @@
                 "outbound": "Direct-Out"
             },
             {
-                "domain_suffix": [ "ileidian.com", "ottiptv.cc" ],
+                "domain_suffix": [ "ileidian.com", "ottiptv.cc", "xiuxitong.com", "pc528.net" ],
                 "outbound": "Direct-Out"
             },
             {
