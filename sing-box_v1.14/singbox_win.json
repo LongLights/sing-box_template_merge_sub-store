@@ -26,8 +26,7 @@
     ],
     "experimental": {
         "cache_file": {
-            "enabled": true,
-            "store_fakeip": true
+            "enabled": true
         }
     },
     "log": {
@@ -39,7 +38,7 @@
             {
                 "tag": "proxy_dns",
                 "type": "https",
-                "server": "1.1.1.1",
+                "server": "8.8.8.8",
                 "detour": "Default"
             },
             {

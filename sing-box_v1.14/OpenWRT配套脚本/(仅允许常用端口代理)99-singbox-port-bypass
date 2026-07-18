@@ -1,86 +1,84 @@
 #!/bin/sh
-# 把本脚本放在 /etc/hotplug.d/net/ 目录下
-# 
-# === 策略说明 ===
-# 实行“端口白名单”机制。仅代理常用端口，其他端口(游戏/P2P/STUN打洞/BT下载)直连。
-# 包含对局域网设备(Prerouting)和路由器本机(Output)的双重处理。
+# 放置于 /etc/hotplug.d/net/，例如：
+# /etc/hotplug.d/net/99-singbox-port-bypass
 
-if [ "$ACTION" != "add" ] || [ "$INTERFACE" != "singbox_tun" ]; then
-    exit 0
-fi
+[ "$ACTION" = "add" ] || exit 0
+[ "$INTERFACE" = "singbox_tun" ] || exit 0
 
-# 轮询等待 sing-box 链加载完成
+TABLE_FAMILY="inet"
+TABLE_NAME="sing-box"
+SET_NAME="common_ports_set"
+BYPASS_CHAIN="port_bypass_chain"
+
+COMMON_PORTS="53, 80, 123, 143, 194, 443, 465, 587, 853, 993, 995, 998, 2052, 2053, 2082, 2083, 2086, 2095, 2096, 5222, 5228, 5229, 5230, 8080, 8443, 8880, 8888, 8889"
+
+# 等待 sing-box 完整创建 nftables 表和关键链。
 RETRY_COUNT=15
-while [ $RETRY_COUNT -gt 0 ]; do
-    sleep 1
-    if nft list chain inet sing-box prerouting >/dev/null 2>&1; then
+while [ "$RETRY_COUNT" -gt 0 ]; do
+    if nft list chain "$TABLE_FAMILY" "$TABLE_NAME" prerouting_prematch \
+        >/dev/null 2>&1 &&
+       nft list chain "$TABLE_FAMILY" "$TABLE_NAME" output_prematch \
+        >/dev/null 2>&1; then
         break
     fi
+
+    sleep 1
     RETRY_COUNT=$((RETRY_COUNT - 1))
 done
 
-if [ $RETRY_COUNT -eq 0 ]; then
-    exit 1
+[ "$RETRY_COUNT" -gt 0 ] || exit 1
+
+# 幂等创建端口集合。
+if ! nft list set "$TABLE_FAMILY" "$TABLE_NAME" "$SET_NAME" \
+    >/dev/null 2>&1; then
+    nft add set "$TABLE_FAMILY" "$TABLE_NAME" "$SET_NAME" \
+        '{ type inet_service; flags interval; }' || exit 1
 fi
 
-# === 配置区域 ===
-# 常用端口列表 (用于决定哪些流量 *必须* 走代理)
-# 包含：DNS, HTTP/S, Mail, DoT/DoH, 常见即时通讯端口
-COMMON_PORTS="21, 22, 23, 53, 80, 123, 143, 194, 443, 465, 587, 853, 993, 995, 998, 2052, 2053, 2082, 2083, 2086, 2095, 2096, 5222, 5228, 5229, 5230, 8080, 8443, 8880, 8888, 8889"
-# === 结束配置 ===
+nft flush set "$TABLE_FAMILY" "$TABLE_NAME" "$SET_NAME" || exit 1
+nft add element "$TABLE_FAMILY" "$TABLE_NAME" "$SET_NAME" \
+    "{ $COMMON_PORTS }" || exit 1
 
-# 1. 定义 Set
-# inet_service 类型同时支持 TCP 和 UDP 端口匹配
-nft add set inet sing-box common_ports_set { type inet_service\; flags interval\; }
-nft flush set inet sing-box common_ports_set
-nft add element inet sing-box common_ports_set { $COMMON_PORTS }
+# 幂等创建旁路链。
+if ! nft list chain "$TABLE_FAMILY" "$TABLE_NAME" "$BYPASS_CHAIN" \
+    >/dev/null 2>&1; then
+    nft add chain "$TABLE_FAMILY" "$TABLE_NAME" "$BYPASS_CHAIN" || exit 1
+fi
 
-# 2. 定义 Chain (旁路检测链)
-nft add chain inet sing-box port_bypass_chain
-nft flush chain inet sing-box port_bypass_chain
+nft flush chain "$TABLE_FAMILY" "$TABLE_NAME" "$BYPASS_CHAIN" || exit 1
 
-# === 3. 核心规则注入 (关键逻辑) ===
+# 非白名单目标端口不进入 sing-box。
+# counter 用来确认 P2P 流量是否确实命中了旁路规则。
+nft add rule "$TABLE_FAMILY" "$TABLE_NAME" "$BYPASS_CHAIN" \
+    meta l4proto udp udp dport != @"$SET_NAME" \
+    counter accept comment \"sing-box-port-bypass-udp\" || exit 1
 
-# [规则 A: UDP]
-# 逻辑：如果是 UDP 且 目标端口不在常用列表中 -> 直连(ACCEPT，终止后续代理规则)
-nft add rule inet sing-box port_bypass_chain meta l4proto udp th dport != @common_ports_set accept
+nft add rule "$TABLE_FAMILY" "$TABLE_NAME" "$BYPASS_CHAIN" \
+    meta l4proto tcp tcp dport != @"$SET_NAME" \
+    counter accept comment \"sing-box-port-bypass-tcp\" || exit 1
 
-# [规则 B: TCP]
-# 逻辑：如果是 TCP 且 目标端口不在常用列表中 -> 直连(ACCEPT，终止后续代理规则)
-nft add rule inet sing-box port_bypass_chain meta l4proto tcp th dport != @common_ports_set accept
+nft add rule "$TABLE_FAMILY" "$TABLE_NAME" "$BYPASS_CHAIN" \
+    return || exit 1
 
-# [规则 C: 返回]
-# 逻辑：未被上述规则 ACCEPT 的流量，返回主链继续处理 (被 sing-box 劫持)
-nft add rule inet sing-box port_bypass_chain return
-
-# === 4. 插入 Jump 到局域网流量链 (Prerouting) ===
-
-# 挂载 LAN UDP 链
-if nft list chain inet sing-box prerouting_udp_icmp >/dev/null 2>&1; then
-    if ! nft list chain inet sing-box prerouting_udp_icmp | grep -q "jump port_bypass_chain"; then
-        # insert 默认插到最前面，确保在 sing-box 处理之前生效
-        nft insert rule inet sing-box prerouting_udp_icmp jump port_bypass_chain
+# 每一个相关 base chain 都必须旁路。
+# prematch 链用于避开 NFQUEUE；其余链用于避开后续 mark/redirect。
+for CHAIN in \
+    prerouting_prematch \
+    output_prematch \
+    prerouting \
+    prerouting_udp_icmp \
+    output \
+    output_udp_icmp
+do
+    if nft list chain "$TABLE_FAMILY" "$TABLE_NAME" "$CHAIN" \
+        >/dev/null 2>&1; then
+        if ! nft list chain "$TABLE_FAMILY" "$TABLE_NAME" "$CHAIN" |
+            grep -q "jump $BYPASS_CHAIN"; then
+            nft insert rule "$TABLE_FAMILY" "$TABLE_NAME" "$CHAIN" \
+                jump "$BYPASS_CHAIN" \
+                comment \"sing-box-port-bypass-hook\"
+        fi
     fi
-fi
+done
 
-# 挂载 LAN TCP/通用 链
-if ! nft list chain inet sing-box prerouting | grep -q "jump port_bypass_chain"; then
-    nft insert rule inet sing-box prerouting jump port_bypass_chain
-fi
-
-# === 5. [新增] 插入 Jump 到本机流量链 (Output) ===
-# 修复 natmap 等本机进程不遵循端口策略的问题
-
-# 挂载本机 UDP 链
-if nft list chain inet sing-box output_udp_icmp >/dev/null 2>&1; then
-    if ! nft list chain inet sing-box output_udp_icmp | grep -q "jump port_bypass_chain"; then
-        nft insert rule inet sing-box output_udp_icmp jump port_bypass_chain
-    fi
-fi
-
-# 挂载本机 TCP/通用 链
-if nft list chain inet sing-box output >/dev/null 2>&1; then
-    if ! nft list chain inet sing-box output | grep -q "jump port_bypass_chain"; then
-        nft insert rule inet sing-box output jump port_bypass_chain
-    fi
-fi
+exit 0
