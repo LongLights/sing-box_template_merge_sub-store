@@ -14,7 +14,7 @@
 
 ## sing-box配置模板使用说明
 
-提供两套配置模板及一个 js 脚本，js 脚本使用参考旧版说明中的使用步骤
+提供两套配置模板及一个 js 脚本，js 脚本使用参考下方的使用步骤
 
 两个版本间的唯一区别是 inbounds 中是否含有 auto_redirect 字段，这个特性不光 windows，即使是安卓、iOS 同样并不支持
 
@@ -23,6 +23,7 @@
 其他如 Windows、安卓、iOS 均应使用有后缀的版本（不使用 auto_redirect）
 
 p.s. 使用openwrt配套脚本需要满足：确保使用官方 ipk 方式安装（需要支持/etc/init.d/sing-box 指令）
+openwrt端的**mac地址过滤、仅常用端口代理**脚本在1.14中已不再需要（config中的bypass、exclude字段可实现等同效果）
 
 ## 使用步骤（默认模式）
 
@@ -31,7 +32,7 @@ p.s. 使用openwrt配套脚本需要满足：确保使用官方 ipk 方式安装
 3. 在 sub-store 的文件管理功能中编辑 singbox_template.json 添加一个脚本操作，并且选择链接：
 
 ```
-https://ghfast.top/raw.githubusercontent.com/LongLights/sing-box_template_merge_sub-store/main/sing-box_v1.13/merge_all.js#name=<你在sub-store中的订阅名称>&type=<在sub-store中的订阅类型>
+https://ghfast.top/raw.githubusercontent.com/LongLights/sing-box_template_merge_sub-store/main/merge.js#name=<你在sub-store中的订阅名称>&type=<在sub-store中的订阅类型>
 ```
 
 type 可以赋值 0 或 1,0 表示单条订阅，1 表示组合订阅

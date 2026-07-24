@@ -26,7 +26,8 @@
     ],
     "experimental": {
         "cache_file": {
-            "enabled": true
+            "enabled": true,
+            "store_dns": false
         }
     },
     "log": {
@@ -38,27 +39,25 @@
             {
                 "tag": "proxy_dns",
                 "type": "https",
-                "server": "8.8.8.8",
+                "server": "1.1.1.1",
                 "detour": "Default"
             },
             {
                 "tag": "cn_dns",
                 "type": "udp",
                 "server": "114.114.114.114"
-            },
-            {
-                "tag": "fake_dns",
-                "type": "fakeip",
-                "inet4_range": "11.0.0.0/16",
-                "inet6_range": "3ffe::/16"
             }
         ],
         "rules": [
             {
+                "query_type": "AAAA",
+                "action": "predefined",
+                "rcode": "NOERROR"
+            },
+            {
                 "rule_set": "gfw",
-                "query_type": [ "A", "AAAA" ],
                 "action": "route",
-                "server": "fake_dns"
+                "server": "proxy_dns"
             },
             {
                 "type": "logical",
@@ -89,9 +88,7 @@
             },
             {
                 "action": "route",
-                "query_type": [ "A", "AAAA" ],
-                "server": "fake_dns",
-                "rewrite_ttl": 1
+                "server": "proxy_dns"
             }
         ]
     },
@@ -100,19 +97,19 @@
             "type": "tun",
             "tag": "tun-in",
             "interface_name": "singbox_tun",
-            "address": [ "172.18.0.1/30", "fdfe:dcba:9876::1/126" ],
-            "mtu": 9000,
+            "address": [ "172.18.0.1/30" ],
+            "mtu": 1500,
             "auto_route": true,
             "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
             "strict_route": true,
+            "auto_redirect": true,
             "stack": "mixed",
             "platform": {
                 "http_proxy": {
                     "enabled": true,
                     "server": "127.0.0.1",
                     "server_port": 7890,
-                    "bypass_domain": [ ],
-                    "match_domain": [ ]
+                    "bypass_domain": [ ]
                 }
             }
         },
@@ -339,20 +336,28 @@
                 "outbound": "Direct-Out"
             },
             {
-                "protocol": "quic",
-                "action": "reject"
-            },
-            {
                 "protocol": "bittorrent",
-                "outbound": "Direct-Out"
-            },
-            {
-                "port": [ 3478, 5201 ],
                 "outbound": "Direct-Out"
             },
             {
                 "domain_suffix": [ "ileidian.com", "ottiptv.cc", "xiuxitong.com", "pc528.net" ],
                 "outbound": "Direct-Out"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "domain": [ "ic.adobe.io", "cc-api-data.adobe.io" ]
+                    },
+                    {
+                        "domain_regex": "^[a-z\\d]{10}\\.adobe\\.io$"
+                    },
+                    {
+                        "domain_suffix": "adobestats.io"
+                    }
+                ],
+                "action": "reject"
             },
             {
                 "domain_suffix": [ "uhdnow.com" ],

@@ -26,8 +26,7 @@
     ],
     "experimental": {
         "cache_file": {
-            "enabled": true,
-            "store_dns": false
+            "enabled": true
         }
     },
     "log": {
@@ -39,25 +38,27 @@
             {
                 "tag": "proxy_dns",
                 "type": "https",
-                "server": "1.1.1.1",
+                "server": "8.8.8.8",
                 "detour": "Default"
             },
             {
                 "tag": "cn_dns",
                 "type": "udp",
                 "server": "114.114.114.114"
+            },
+            {
+                "tag": "fake_dns",
+                "type": "fakeip",
+                "inet4_range": "11.0.0.0/16",
+                "inet6_range": "3ffe::/16"
             }
         ],
         "rules": [
             {
-                "query_type": "AAAA",
-                "action": "predefined",
-                "rcode": "NOERROR"
-            },
-            {
                 "rule_set": "gfw",
+                "query_type": [ "A", "AAAA" ],
                 "action": "route",
-                "server": "proxy_dns"
+                "server": "fake_dns"
             },
             {
                 "type": "logical",
@@ -88,7 +89,9 @@
             },
             {
                 "action": "route",
-                "server": "proxy_dns"
+                "query_type": [ "A", "AAAA" ],
+                "server": "fake_dns",
+                "rewrite_ttl": 1
             }
         ]
     },
@@ -97,8 +100,8 @@
             "type": "tun",
             "tag": "tun-in",
             "interface_name": "singbox_tun",
-            "address": [ "172.18.0.1/30" ],
-            "mtu": 1500,
+            "address": [ "172.18.0.1/30", "fdfe:dcba:9876::1/126" ],
+            "mtu": 9000,
             "auto_route": true,
             "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
             "strict_route": true,
@@ -291,11 +294,6 @@
         ],
         "rules": [
             {
-                "port": [ 21, 22, 23, 53, 80, 123, 143, 194, 443, 465, 587, 853, 993, 995, 998, 2052, 2053, 2082, 2083, 2086, 2095, 2096, 5222, 5228, 5229, 5230, 8080, 8443, 8880, 8888, 8889 ],
-                "invert": true,
-                "action": "bypass"
-            },
-            {
                 "type": "logical",
                 "mode": "and",
                 "rules": [
@@ -333,7 +331,15 @@
                 "outbound": "Direct-Out"
             },
             {
+                "protocol": "quic",
+                "action": "reject"
+            },
+            {
                 "protocol": "bittorrent",
+                "outbound": "Direct-Out"
+            },
+            {
+                "port": [ 3478, 5201 ],
                 "outbound": "Direct-Out"
             },
             {
