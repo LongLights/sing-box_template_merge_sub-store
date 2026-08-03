@@ -68,22 +68,9 @@
                         "domain_suffix": [ ".cn" ]
                     },
                     {
-                        "domain_keyword": [ "stun", "turn" ]
-                    },
-                    {
                         "rule_set": "cnsite"
                     }
                 ],
-                "server": "cn_dns"
-            },
-            {
-                "action": "evaluate",
-                "server": "proxy_dns"
-            },
-            {
-                "match_response": true,
-                "rule_set": "cnip",
-                "action": "route",
                 "server": "cn_dns"
             },
             {
@@ -291,11 +278,6 @@
         ],
         "rules": [
             {
-                "port": [ 21, 22, 23, 53, 80, 123, 143, 194, 443, 465, 587, 853, 993, 995, 998, 2052, 2053, 2082, 2083, 2086, 2095, 2096, 5222, 5228, 5229, 5230, 8080, 8443, 8880, 8888, 8889 ],
-                "invert": true,
-                "action": "bypass"
-            },
-            {
                 "type": "logical",
                 "mode": "and",
                 "rules": [
@@ -310,6 +292,7 @@
             },
             {
                 "network": "icmp",
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
@@ -330,58 +313,77 @@
             },
             {
                 "ip_is_private": true,
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
                 "protocol": "bittorrent",
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
                 "domain_suffix": [ "ileidian.com", "ottiptv.cc", "xiuxitong.com", "pc528.net" ],
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
                 "domain_suffix": [ "uhdnow.com" ],
+                "action": "route",
                 "outbound": "Emby"
             },
             {
                 "rule_set": "emby",
+                "action": "route",
                 "outbound": "Emby"
             },
             {
                 "rule_set": "paypal",
+                "action": "route",
                 "outbound": "PayPal"
             },
             {
                 "rule_set": "telegramsite",
+                "action": "route",
                 "outbound": "Telegram"
             },
             {
                 "rule_set": "tiktok",
+                "action": "route",
                 "outbound": "TikTok"
             },
             {
                 "rule_set": "instagram",
+                "action": "route",
                 "outbound": "Instagram"
             },
             {
                 "rule_set": "aiservice",
+                "action": "route",
                 "outbound": "AI-Service"
             },
             {
                 "domain_suffix": "sexlikereal.com",
+                "action": "route",
                 "outbound": "Streaming-Media"
             },
             {
                 "rule_set": [ "netflixsite", "hbo", "disney", "hulu" ],
+                "action": "route",
                 "outbound": "Streaming-Media"
             },
             {
                 "rule_set": "cngames",
+                "action": "route",
+                "outbound": "Direct-Out"
+            },
+            {
+                "rule_set": "cnsite",
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
                 "rule_set": "gfw",
+                "action": "route",
                 "outbound": "Default"
             },
             {
@@ -389,14 +391,17 @@
             },
             {
                 "rule_set": "telegramip",
+                "action": "route",
                 "outbound": "Telegram"
             },
             {
                 "rule_set": "netflixip",
+                "action": "route",
                 "outbound": "Streaming-Media"
             },
             {
                 "rule_set": "cnip",
+                "action": "route",
                 "outbound": "Direct-Out"
             }
         ]

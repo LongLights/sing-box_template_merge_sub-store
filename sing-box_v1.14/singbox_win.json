@@ -68,22 +68,9 @@
                         "domain_suffix": [ ".cn" ]
                     },
                     {
-                        "domain_keyword": [ "stun", "turn" ]
-                    },
-                    {
                         "rule_set": "cnsite"
                     }
                 ],
-                "server": "cn_dns"
-            },
-            {
-                "action": "evaluate",
-                "server": "proxy_dns"
-            },
-            {
-                "match_response": true,
-                "rule_set": "cnip",
-                "action": "route",
                 "server": "cn_dns"
             },
             {
@@ -102,15 +89,7 @@
             "auto_route": true,
             "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
             "strict_route": true,
-            "stack": "mixed",
-            "platform": {
-                "http_proxy": {
-                    "enabled": true,
-                    "server": "127.0.0.1",
-                    "server_port": 7890,
-                    "bypass_domain": [ ]
-                }
-            }
+            "stack": "mixed"
         },
         {
             "type": "mixed",
@@ -312,6 +291,7 @@
             },
             {
                 "network": "icmp",
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
@@ -332,14 +312,17 @@
             },
             {
                 "ip_is_private": true,
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
                 "protocol": "bittorrent",
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
                 "domain_suffix": [ "ileidian.com", "ottiptv.cc", "xiuxitong.com", "pc528.net" ],
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
@@ -360,46 +343,62 @@
             },
             {
                 "domain_suffix": [ "uhdnow.com" ],
+                "action": "route",
                 "outbound": "Emby"
             },
             {
                 "rule_set": "emby",
+                "action": "route",
                 "outbound": "Emby"
             },
             {
                 "rule_set": "paypal",
+                "action": "route",
                 "outbound": "PayPal"
             },
             {
                 "rule_set": "telegramsite",
+                "action": "route",
                 "outbound": "Telegram"
             },
             {
                 "rule_set": "tiktok",
+                "action": "route",
                 "outbound": "TikTok"
             },
             {
                 "rule_set": "instagram",
+                "action": "route",
                 "outbound": "Instagram"
             },
             {
                 "rule_set": "aiservice",
+                "action": "route",
                 "outbound": "AI-Service"
             },
             {
                 "domain_suffix": "sexlikereal.com",
+                "action": "route",
                 "outbound": "Streaming-Media"
             },
             {
                 "rule_set": [ "netflixsite", "hbo", "disney", "hulu" ],
+                "action": "route",
                 "outbound": "Streaming-Media"
             },
             {
                 "rule_set": "cngames",
+                "action": "route",
+                "outbound": "Direct-Out"
+            },
+            {
+                "rule_set": "cnsite",
+                "action": "route",
                 "outbound": "Direct-Out"
             },
             {
                 "rule_set": "gfw",
+                "action": "route",
                 "outbound": "Default"
             },
             {
@@ -407,14 +406,17 @@
             },
             {
                 "rule_set": "telegramip",
+                "action": "route",
                 "outbound": "Telegram"
             },
             {
                 "rule_set": "netflixip",
+                "action": "route",
                 "outbound": "Streaming-Media"
             },
             {
                 "rule_set": "cnip",
+                "action": "route",
                 "outbound": "Direct-Out"
             }
         ]
