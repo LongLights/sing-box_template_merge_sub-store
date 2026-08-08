@@ -39,7 +39,7 @@
             {
                 "tag": "proxy_dns",
                 "type": "https",
-                "server": "1.1.1.1",
+                "server": "8.8.8.8",
                 "detour": "Default"
             },
             {
@@ -90,7 +90,8 @@
             "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
             "strict_route": true,
             "auto_redirect": true,
-            "stack": "mixed"
+            "stack": "mixed",
+            "dns_mode": "hijack"
         },
         {
             "type": "mixed",
@@ -281,12 +282,8 @@
                 "type": "logical",
                 "mode": "and",
                 "rules": [
-                    {
-                        "port": 443
-                    },
-                    {
-                        "network": "udp"
-                    }
+                    { "port": 443 },
+                    { "network": "udp" }
                 ],
                 "action": "reject"
             },
@@ -295,19 +292,13 @@
                 "action": "route",
                 "outbound": "Direct-Out"
             },
-            {
-                "action": "sniff"
-            },
+            { "action": "sniff" },
             {
                 "type": "logical",
                 "mode": "or",
                 "rules": [
-                    {
-                        "protocol": "dns"
-                    },
-                    {
-                        "port": 53
-                    }
+                    { "protocol": "dns" },
+                    { "port": 53 }
                 ],
                 "action": "hijack-dns"
             },
@@ -373,11 +364,6 @@
             },
             {
                 "rule_set": "cngames",
-                "action": "route",
-                "outbound": "Direct-Out"
-            },
-            {
-                "rule_set": "cnsite",
                 "action": "route",
                 "outbound": "Direct-Out"
             },
