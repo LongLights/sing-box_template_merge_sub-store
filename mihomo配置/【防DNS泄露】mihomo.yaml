@@ -1,9 +1,9 @@
 proxy-providers:
   LongLight:
     type: http
-    url: "<你的订阅链接>"
+    url: "<这里填你的订阅链接>"
     path: ./proxy_providers/LongLight.yaml
-    interval: 3600
+    interval: 900
     proxy: DIRECT
     size-limit: 0
 
@@ -22,7 +22,7 @@ dns:
   proxy-server-nameserver:
     - system
   nameserver-policy:
-    "+.cn,private,rule-set:cnsite":
+    "private,rule-set:cnsite":
       - system
   enhanced-mode: fake-ip
   fake-ip-range: 11.0.0.0/16
@@ -70,7 +70,7 @@ proxy-groups:
   #规则匹配组
   - name: Default
     type: select
-    proxies: [Auto]
+    proxies: [Auto, DIRECT]
     use: [LongLight]
     icon: https://raw.githubusercontent.com/Orz-3/mini/refs/heads/master/Color/Kuai.png
   - name: Auto
@@ -240,7 +240,11 @@ rules:
   - AND,(AND,(DST-PORT,443),(NETWORK,UDP)),(NOT,((RULE-SET,cnsite))),REJECT
   - AND,(AND,(DST-PORT,443),(NETWORK,UDP)),(NOT,((RULE-SET,cnip))),REJECT
   #个人小众需求
+  - DST-PORT,22,DIRECT
+  - DST-PORT,3478,DIRECT
   - DST-PORT,5201,DIRECT
+  - DOMAIN-SUFFIX,xiuxitong.com,DIRECT
+  - DOMAIN-SUFFIX,pc528.net,DIRECT
   - DOMAIN-SUFFIX,ileidian.com,DIRECT
   - DOMAIN-SUFFIX,ghfast.top,DIRECT
   - DOMAIN-SUFFIX,ottiptv.cc,DIRECT
@@ -260,6 +264,7 @@ rules:
   - RULE-SET,hulu,Streaming-Media
     #以下均是核心规则
   - RULE-SET,cngame,DIRECT
+  - RULE-SET,cnsite,DIRECT
   - RULE-SET,gfw,Default
     #ip规则置下减少dns查询
   - RULE-SET,telegramip,Telegram

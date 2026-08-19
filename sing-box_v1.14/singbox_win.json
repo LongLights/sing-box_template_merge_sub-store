@@ -91,7 +91,16 @@
             "route_exclude_address": [ "10.0.0.0/8", "100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.168.0.0/16" ],
             "strict_route": true,
             "stack": "mixed",
-            "dns_mode": "hijack"
+            "dns_mode": "hijack",
+            "platform": {
+                "http_proxy": {
+                    "enabled": true,
+                    "server": "127.0.0.1",
+                    "server_port": 7890,
+                    "bypass_domain": [ ],
+                    "match_domain": [ ]
+                }
+            }
         },
         {
             "type": "mixed",
@@ -279,11 +288,17 @@
         ],
         "rules": [
             {
+                "port": [ 3478, 13497 ],
+                "outbound": "Direct-Out"
+            },
+            {
                 "type": "logical",
                 "mode": "and",
                 "rules": [
                     { "port": 443 },
-                    { "network": "udp" }
+                    { "network": "udp" },
+                    { "rule_set": "cnsite", "invert": true },
+                    { "rule_set": "cnip", "invert": true }
                 ],
                 "action": "reject"
             },
