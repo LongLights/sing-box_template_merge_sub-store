@@ -1,9 +1,9 @@
 proxy-providers:
   LongLight:
     type: http
-    url: "<这里填你的订阅链接>"
+    url: "<这里填你的节点订阅链接>"
     path: ./proxy_providers/LongLight.yaml
-    interval: 900
+    interval: 600
     proxy: DIRECT
     size-limit: 0
 
@@ -17,13 +17,18 @@ dns:
   use-system-hosts: true
   respect-rules: true
   nameserver:
-    - https://1.1.1.1/dns-query
-    - https://8.8.8.8/dns-query
+    - 8.8.8.8
+    - 1.1.1.1
   proxy-server-nameserver:
-    - system
+    - 114.114.114.114
+    - 119.29.29.29
   nameserver-policy:
-    "private,rule-set:cnsite":
-      - system
+    "rule-set:lansite":
+      - 114.114.114.114
+      - 119.29.29.29
+    "rule-set:cnsite":
+      - 114.114.114.114
+      - 119.29.29.29
   enhanced-mode: fake-ip
   fake-ip-range: 11.0.0.0/16
   fake-ip-range6: 3ffe::/16
@@ -62,8 +67,8 @@ dns:
     #快捷登录
     - "graph.qq.com"
     - "+.ptlogin2.qq.com"
-    #cn地址
-    - "+.cn"
+    #lan及cn地址
+    - "rule-set:lansite"
     - "rule-set:cnsite"
 
 proxy-groups:
@@ -122,6 +127,20 @@ proxy-groups:
     icon: https://raw.githubusercontent.com/Koolson/Qure/refs/heads/master/IconSet/Color/Emby.png
 
 rule-providers:
+  lanip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/private.mrs"
+    path: ./ruleset/lanip.mrs
+    interval: 86400
+  lansite:
+    type: http
+    behavior: domain
+    format: mrs
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/private.mrs"
+    path: ./ruleset/lansite.mrs
+    interval: 86400
   cnip:
     type: http
     behavior: ipcidr
@@ -237,12 +256,14 @@ rule-providers:
 
 rules:
   #屏蔽国外QUIC流量
-  - AND,(AND,(DST-PORT,443),(NETWORK,UDP)),(NOT,((RULE-SET,cnsite))),REJECT
-  - AND,(AND,(DST-PORT,443),(NETWORK,UDP)),(NOT,((RULE-SET,cnip))),REJECT
+  - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((RULE-SET,cnsite))),(NOT,((RULE-SET,cnip,no-resolve)))),REJECT
+  #局域网流量直连
+  - RULE-SET,lansite,DIRECT
+  - RULE-SET,lanip,DIRECT,no-resolve
   #个人小众需求
-  - DST-PORT,22,DIRECT
   - DST-PORT,3478,DIRECT
   - DST-PORT,5201,DIRECT
+  - DOMAIN-SUFFIX,tracker.m-team.cc,DIRECT
   - DOMAIN-SUFFIX,xiuxitong.com,DIRECT
   - DOMAIN-SUFFIX,pc528.net,DIRECT
   - DOMAIN-SUFFIX,ileidian.com,DIRECT
@@ -264,7 +285,6 @@ rules:
   - RULE-SET,hulu,Streaming-Media
     #以下均是核心规则
   - RULE-SET,cngame,DIRECT
-  - RULE-SET,cnsite,DIRECT
   - RULE-SET,gfw,Default
     #ip规则置下减少dns查询
   - RULE-SET,telegramip,Telegram
